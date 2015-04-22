@@ -1,5 +1,5 @@
 //
-//  FastCoding.h
+//  FastCoder.h
 //
 //  Version 3.2.1
 //
