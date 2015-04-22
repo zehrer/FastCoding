@@ -10,7 +10,21 @@
 		AA2526551AE780E800B4767A /* FastCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2526511AE780E800B4767A /* FastCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AA2526561AE780E800B4767A /* FastCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = AA2526521AE780E800B4767A /* FastCoder.m */; };
 		AA2526591AE782C200B4767A /* FastCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2526531AE780E800B4767A /* FastCoding.h */; };
+		AA2526881AE784DD00B4767A /* FastCoder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA25267D1AE784DC00B4767A /* FastCoder.framework */; };
+		AA2526991AE7868D00B4767A /* FastCoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2526981AE7868D00B4767A /* FastCoderTests.swift */; };
+		AA25269C1AE786ED00B4767A /* FastCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2526531AE780E800B4767A /* FastCoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AA25269E1AE786FE00B4767A /* FastCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25269D1AE786FE00B4767A /* FastCoder.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		AA2526891AE784DD00B4767A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA2526261AE77F6A00B4767A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA25267C1AE784DC00B4767A;
+			remoteInfo = FastCoder;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		AA2526371AE7806900B4767A /* FastCoding.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FastCoding.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -18,6 +32,12 @@
 		AA2526521AE780E800B4767A /* FastCoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FastCoder.m; path = FastCoder/FastCoder.m; sourceTree = SOURCE_ROOT; };
 		AA2526531AE780E800B4767A /* FastCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FastCoding.h; path = FastCoder/FastCoding.h; sourceTree = SOURCE_ROOT; };
 		AA2526541AE780E800B4767A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = FastCoder/Info.plist; sourceTree = SOURCE_ROOT; };
+		AA25267D1AE784DC00B4767A /* FastCoder.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FastCoder.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA2526801AE784DC00B4767A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AA2526871AE784DC00B4767A /* FastCoderTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FastCoderTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA2526981AE7868D00B4767A /* FastCoderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FastCoderTests.swift; path = Tests/SWIFT/FastCoderTests.swift; sourceTree = SOURCE_ROOT; };
+		AA25269A1AE7869800B4767A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Tests/SWIFT/Info.plist; sourceTree = SOURCE_ROOT; };
+		AA25269D1AE786FE00B4767A /* FastCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FastCoder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -28,12 +48,30 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AA2526791AE784DC00B4767A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA2526841AE784DC00B4767A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA2526881AE784DD00B4767A /* FastCoder.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		AA2526251AE77F6A00B4767A = {
 			isa = PBXGroup;
 			children = (
+				AA2526531AE780E800B4767A /* FastCoding.h */,
+				AA25267E1AE784DC00B4767A /* FastCoder */,
+				AA25268B1AE784DD00B4767A /* FastCoderTests */,
 				AA2526391AE7806900B4767A /* FastCoder (ObjC) */,
 				AA2526381AE7806900B4767A /* Products */,
 			);
@@ -43,6 +81,8 @@
 			isa = PBXGroup;
 			children = (
 				AA2526371AE7806900B4767A /* FastCoding.framework */,
+				AA25267D1AE784DC00B4767A /* FastCoder.framework */,
+				AA2526871AE784DC00B4767A /* FastCoderTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -50,7 +90,6 @@
 		AA2526391AE7806900B4767A /* FastCoder (ObjC) */ = {
 			isa = PBXGroup;
 			children = (
-				AA2526531AE780E800B4767A /* FastCoding.h */,
 				AA2526511AE780E800B4767A /* FastCoder.h */,
 				AA2526521AE780E800B4767A /* FastCoder.m */,
 				AA25263A1AE7806900B4767A /* Supporting Files */,
@@ -67,6 +106,40 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		AA25267E1AE784DC00B4767A /* FastCoder */ = {
+			isa = PBXGroup;
+			children = (
+				AA25269D1AE786FE00B4767A /* FastCoder.swift */,
+				AA25267F1AE784DC00B4767A /* Supporting Files */,
+			);
+			path = FastCoder;
+			sourceTree = "<group>";
+		};
+		AA25267F1AE784DC00B4767A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				AA2526801AE784DC00B4767A /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		AA25268B1AE784DD00B4767A /* FastCoderTests */ = {
+			isa = PBXGroup;
+			children = (
+				AA2526981AE7868D00B4767A /* FastCoderTests.swift */,
+				AA25268C1AE784DD00B4767A /* Supporting Files */,
+			);
+			path = FastCoderTests;
+			sourceTree = "<group>";
+		};
+		AA25268C1AE784DD00B4767A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				AA25269A1AE7869800B4767A /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -76,6 +149,14 @@
 			files = (
 				AA2526551AE780E800B4767A /* FastCoder.h in Headers */,
 				AA2526591AE782C200B4767A /* FastCoding.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA25267A1AE784DC00B4767A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA25269C1AE786ED00B4767A /* FastCoding.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,6 +181,42 @@
 			productReference = AA2526371AE7806900B4767A /* FastCoding.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		AA25267C1AE784DC00B4767A /* FastCoder */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA2526901AE784DD00B4767A /* Build configuration list for PBXNativeTarget "FastCoder" */;
+			buildPhases = (
+				AA2526781AE784DC00B4767A /* Sources */,
+				AA2526791AE784DC00B4767A /* Frameworks */,
+				AA25267A1AE784DC00B4767A /* Headers */,
+				AA25267B1AE784DC00B4767A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FastCoder;
+			productName = FastCoder;
+			productReference = AA25267D1AE784DC00B4767A /* FastCoder.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		AA2526861AE784DC00B4767A /* FastCoderTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA2526931AE784DD00B4767A /* Build configuration list for PBXNativeTarget "FastCoderTests" */;
+			buildPhases = (
+				AA2526831AE784DC00B4767A /* Sources */,
+				AA2526841AE784DC00B4767A /* Frameworks */,
+				AA2526851AE784DC00B4767A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AA25268A1AE784DD00B4767A /* PBXTargetDependency */,
+			);
+			name = FastCoderTests;
+			productName = FastCoderTests;
+			productReference = AA2526871AE784DC00B4767A /* FastCoderTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -109,6 +226,12 @@
 				LastUpgradeCheck = 0630;
 				TargetAttributes = {
 					AA2526361AE7806900B4767A = {
+						CreatedOnToolsVersion = 6.3;
+					};
+					AA25267C1AE784DC00B4767A = {
+						CreatedOnToolsVersion = 6.3;
+					};
+					AA2526861AE784DC00B4767A = {
 						CreatedOnToolsVersion = 6.3;
 					};
 				};
@@ -126,12 +249,28 @@
 			projectRoot = "";
 			targets = (
 				AA2526361AE7806900B4767A /* FastCoder (ObjC) */,
+				AA25267C1AE784DC00B4767A /* FastCoder */,
+				AA2526861AE784DC00B4767A /* FastCoderTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		AA2526351AE7806900B4767A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA25267B1AE784DC00B4767A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA2526851AE784DC00B4767A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -149,7 +288,31 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AA2526781AE784DC00B4767A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA25269E1AE786FE00B4767A /* FastCoder.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA2526831AE784DC00B4767A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA2526991AE7868D00B4767A /* FastCoderTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AA25268A1AE784DD00B4767A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA25267C1AE784DC00B4767A /* FastCoder */;
+			targetProxy = AA2526891AE784DD00B4767A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		AA25262A1AE77F6A00B4767A /* Debug */ = {
@@ -269,6 +432,205 @@
 			};
 			name = Release;
 		};
+		AA2526911AE784DD00B4767A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_VERSION = A;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = FastCoder/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		AA2526921AE784DD00B4767A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_VERSION = A;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = FastCoder/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		AA2526941AE784DD00B4767A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Tests/SWIFT/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		AA2526951AE784DD00B4767A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Tests/SWIFT/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -286,6 +648,22 @@
 			buildConfigurations = (
 				AA25264C1AE7806A00B4767A /* Debug */,
 				AA25264D1AE7806A00B4767A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		AA2526901AE784DD00B4767A /* Build configuration list for PBXNativeTarget "FastCoder" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA2526911AE784DD00B4767A /* Debug */,
+				AA2526921AE784DD00B4767A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		AA2526931AE784DD00B4767A /* Build configuration list for PBXNativeTarget "FastCoderTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA2526941AE784DD00B4767A /* Debug */,
+				AA2526951AE784DD00B4767A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
