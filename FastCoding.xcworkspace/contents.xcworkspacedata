@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Workspace
    version = "1.0">
+   <FileRef
+      location = "group:FastCoder.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Examples/TodoList/TodoList.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Benchmarks/Coding Benchmark/Benchmark.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Benchmarks/Plist Benchmark/Benchmark.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Tests/UnitTests.xcodeproj">
+   </FileRef>
 </Workspace>
