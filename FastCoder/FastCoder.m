@@ -881,7 +881,7 @@ static id FCReadNSCodedObject(__unsafe_unretained FCNSDecoder *decoder)
     while (true)
     {
         id object = FCReadObject(decoder);
-        if (!object) break;
+        if (!object) break;  // NIL terminated list
         NSString *key = FCReadObject(decoder);
         decoder->_properties[key] = object;
     }
