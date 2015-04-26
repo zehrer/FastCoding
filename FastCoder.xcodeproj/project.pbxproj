@@ -318,6 +318,7 @@
 		AA25262A1AE77F6A00B4767A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
 			};
 			name = Debug;
 		};
@@ -650,6 +651,7 @@
 				AA25264D1AE7806A00B4767A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		AA2526901AE784DD00B4767A /* Build configuration list for PBXNativeTarget "FastCoder" */ = {
 			isa = XCConfigurationList;
@@ -658,6 +660,7 @@
 				AA2526921AE784DD00B4767A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		AA2526931AE784DD00B4767A /* Build configuration list for PBXNativeTarget "FastCoderTests" */ = {
 			isa = XCConfigurationList;
@@ -666,6 +669,7 @@
 				AA2526951AE784DD00B4767A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
