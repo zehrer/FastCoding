@@ -33,11 +33,12 @@
 #import <Cocoa/Cocoa.h>
 
 //! Project version number for FastCoderObjC.
-FOUNDATION_EXPORT double FastCoderVersionNumber;
+FOUNDATION_EXPORT double FastCodingVersionNumber;
 
 //! Project version string for FastCoderObjC.
-FOUNDATION_EXPORT const unsigned char FastCoderVersionString[];
+FOUNDATION_EXPORT const unsigned char FastCodingVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <FastCoder/PublicHeader.h>
+// In this header, you should import all the public headers of your framework using statements like #import <FastCoding/PublicHeader.h>
 
 // This umbrella header file is used to compile the both versions as a framework. 
+#import <FastCoding/ObjCHelper.h>

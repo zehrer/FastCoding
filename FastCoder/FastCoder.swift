@@ -322,32 +322,11 @@ public class FastCoder {
         return FCType(rawValue: value)
     }
     
-    
-
-    static func FCReadNSCodedObject(decoder : FCDecoder) -> NSObject? {
-        return nil
-    }
-    
-    
-    /**
-    
-    // it seems this code lead to a segmentation fault in the compiler
-    
     static func FCReadNSCodedObject(decoder : FCDecoder) -> NSObject? {
         
         var className = FCReadObject(decoder) as! String
         var oldProperties = decoder.properties
         
-        /**
-        // NO PropertyDictionaryPool support not enabled
-        //
-        
-        if (decoder.propertyDictionaryPool.count > 0) {
-            decoder.properties = decoder.propertyDictionaryPool.last!
-            decoder.propertyDictionaryPool.removeLast()
-            decoder.properties.removeAll(keepCapacity: true)
-        }
-        */
         decoder.properties = Dictionary()
         
         while (true) {
@@ -358,17 +337,51 @@ public class FastCoder {
             decoder.properties[key] = object
         }
         
+        //let objClass = NSClassFromString(className) as! NSCoding.Type
+        // it seems this code lead to a segmentation fault in the compiler
+        //var object : NSObject = objClass(coder: decoder) as! NSObject
+        
+        var object = ObjCHelper.initClass(className, withCoder: decoder)
+        decoder.properties = oldProperties
+        
+        return nil //object
+    }
+    
+
+    /**
+    
+    static func FCReadNSCodedObject(decoder : FCDecoder) -> NSObject? {
+        
+        var className = FCReadObject(decoder) as! String
+        var oldProperties = decoder.properties
+    
+        if (decoder.propertyDictionaryPool.count > 0) {
+            decoder.properties = decoder.propertyDictionaryPool.last!
+            decoder.propertyDictionaryPool.removeLast()
+            decoder.properties.removeAll(keepCapacity: true)
+        } else {
+            decoder.properties = Dictionary()
+        }
+    
+        while (true) {
+            // read all elements as input for initWithCoder:
+            var object = FCReadObject(decoder)
+            if object != nil { break }
+            var key = FCReadObject(decoder)as! String
+            decoder.properties[key] = object
+        }
+        
         let objClass = NSClassFromString(className) as! NSCoding.Type
+    
         var object = objClass(coder: decoder)
-        //decoder.propertyDictionaryPool.append(decoder.properties)
+        decoder.propertyDictionaryPool.append(decoder.properties)
         decoder.properties = oldProperties
         
         return object as? NSObject
     }
 
-*/
+    */
 
-    
     static func FCReadObject(decoder : FCDecoder) -> NSObject? {
         
         var type = FCReadType(decoder)
@@ -404,6 +417,8 @@ public class FastCoder {
         
         return nil
     }
+    
+    // --------------------------------------------------------------------------------
     
     // MARK: Write Methode
     

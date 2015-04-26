@@ -10,10 +10,12 @@
 		AA2526551AE780E800B4767A /* FastCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2526511AE780E800B4767A /* FastCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AA2526561AE780E800B4767A /* FastCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = AA2526521AE780E800B4767A /* FastCoder.m */; };
 		AA2526591AE782C200B4767A /* FastCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2526531AE780E800B4767A /* FastCoding.h */; };
-		AA2526881AE784DD00B4767A /* FastCoder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA25267D1AE784DC00B4767A /* FastCoder.framework */; };
+		AA2526881AE784DD00B4767A /* FastCoding.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA25267D1AE784DC00B4767A /* FastCoding.framework */; };
 		AA2526991AE7868D00B4767A /* FastCoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2526981AE7868D00B4767A /* FastCoderTests.swift */; };
-		AA25269C1AE786ED00B4767A /* FastCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2526531AE780E800B4767A /* FastCoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AA25269E1AE786FE00B4767A /* FastCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25269D1AE786FE00B4767A /* FastCoder.swift */; };
+		AAD957581AED6832002C7446 /* ObjCHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD957561AED6832002C7446 /* ObjCHelper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AAD957591AED6832002C7446 /* ObjCHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = AAD957571AED6832002C7446 /* ObjCHelper.m */; };
+		AAF961351AED734A002D9638 /* FastCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2526531AE780E800B4767A /* FastCoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,12 +34,14 @@
 		AA2526521AE780E800B4767A /* FastCoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FastCoder.m; path = FastCoder/FastCoder.m; sourceTree = SOURCE_ROOT; };
 		AA2526531AE780E800B4767A /* FastCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FastCoding.h; path = FastCoder/FastCoding.h; sourceTree = SOURCE_ROOT; };
 		AA2526541AE780E800B4767A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = FastCoder/Info.plist; sourceTree = SOURCE_ROOT; };
-		AA25267D1AE784DC00B4767A /* FastCoder.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FastCoder.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA25267D1AE784DC00B4767A /* FastCoding.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FastCoding.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA2526801AE784DC00B4767A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA2526871AE784DC00B4767A /* FastCoderTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FastCoderTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA2526981AE7868D00B4767A /* FastCoderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FastCoderTests.swift; path = Tests/SWIFT/FastCoderTests.swift; sourceTree = SOURCE_ROOT; };
 		AA25269A1AE7869800B4767A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Tests/SWIFT/Info.plist; sourceTree = SOURCE_ROOT; };
 		AA25269D1AE786FE00B4767A /* FastCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FastCoder.swift; sourceTree = "<group>"; };
+		AAD957561AED6832002C7446 /* ObjCHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjCHelper.h; sourceTree = "<group>"; };
+		AAD957571AED6832002C7446 /* ObjCHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjCHelper.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,7 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA2526881AE784DD00B4767A /* FastCoder.framework in Frameworks */,
+				AA2526881AE784DD00B4767A /* FastCoding.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,7 +85,7 @@
 			isa = PBXGroup;
 			children = (
 				AA2526371AE7806900B4767A /* FastCoding.framework */,
-				AA25267D1AE784DC00B4767A /* FastCoder.framework */,
+				AA25267D1AE784DC00B4767A /* FastCoding.framework */,
 				AA2526871AE784DC00B4767A /* FastCoderTests.xctest */,
 			);
 			name = Products;
@@ -110,6 +114,8 @@
 			isa = PBXGroup;
 			children = (
 				AA25269D1AE786FE00B4767A /* FastCoder.swift */,
+				AAD957561AED6832002C7446 /* ObjCHelper.h */,
+				AAD957571AED6832002C7446 /* ObjCHelper.m */,
 				AA25267F1AE784DC00B4767A /* Supporting Files */,
 			);
 			path = FastCoder;
@@ -156,7 +162,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA25269C1AE786ED00B4767A /* FastCoding.h in Headers */,
+				AAD957581AED6832002C7446 /* ObjCHelper.h in Headers */,
+				AAF961351AED734A002D9638 /* FastCoding.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -181,9 +188,9 @@
 			productReference = AA2526371AE7806900B4767A /* FastCoding.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		AA25267C1AE784DC00B4767A /* FastCoder */ = {
+		AA25267C1AE784DC00B4767A /* FastCoding */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AA2526901AE784DD00B4767A /* Build configuration list for PBXNativeTarget "FastCoder" */;
+			buildConfigurationList = AA2526901AE784DD00B4767A /* Build configuration list for PBXNativeTarget "FastCoding" */;
 			buildPhases = (
 				AA2526781AE784DC00B4767A /* Sources */,
 				AA2526791AE784DC00B4767A /* Frameworks */,
@@ -194,9 +201,9 @@
 			);
 			dependencies = (
 			);
-			name = FastCoder;
+			name = FastCoding;
 			productName = FastCoder;
-			productReference = AA25267D1AE784DC00B4767A /* FastCoder.framework */;
+			productReference = AA25267D1AE784DC00B4767A /* FastCoding.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		AA2526861AE784DC00B4767A /* FastCoderTests */ = {
@@ -249,7 +256,7 @@
 			projectRoot = "";
 			targets = (
 				AA2526361AE7806900B4767A /* FastCoder (ObjC) */,
-				AA25267C1AE784DC00B4767A /* FastCoder */,
+				AA25267C1AE784DC00B4767A /* FastCoding */,
 				AA2526861AE784DC00B4767A /* FastCoderTests */,
 			);
 		};
@@ -293,6 +300,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA25269E1AE786FE00B4767A /* FastCoder.swift in Sources */,
+				AAD957591AED6832002C7446 /* ObjCHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -309,7 +317,7 @@
 /* Begin PBXTargetDependency section */
 		AA25268A1AE784DD00B4767A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = AA25267C1AE784DC00B4767A /* FastCoder */;
+			target = AA25267C1AE784DC00B4767A /* FastCoding */;
 			targetProxy = AA2526891AE784DD00B4767A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -481,10 +489,11 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_WHOLE_MODULE_OPTIMIZATION = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -531,9 +540,10 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_WHOLE_MODULE_OPTIMIZATION = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -653,7 +663,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AA2526901AE784DD00B4767A /* Build configuration list for PBXNativeTarget "FastCoder" */ = {
+		AA2526901AE784DD00B4767A /* Build configuration list for PBXNativeTarget "FastCoding" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AA2526911AE784DD00B4767A /* Debug */,
