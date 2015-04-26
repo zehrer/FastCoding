@@ -40,10 +40,17 @@ import Foundation
 
 //static const uint32_t FCIdentifier = 'FAST';
 
+// This port is based on the 3.2.1 Version of FastEncode
+// TODO: add header support
+
+let FCIdentifier   : UInt32 = 1178686292 //  'FAST';
+let FCMajorVersion : UInt16 = 3
+let FCMinorVersion : UInt16 = 2
+
 struct FCHeader {
-    let identifier : UInt32 = 1178686292  // 'FAST'
-    let majorVersion : UInt16 = 3
-    let minorVersion : UInt16 = 2
+    let identifier   : UInt32 = 0
+    let majorVersion : UInt16 = 0
+    let minorVersion : UInt16 = 0
 }
 
 enum FCType : UInt8 {
@@ -101,7 +108,6 @@ func ==(lhs: ClassDefinition, rhs: ClassDefinition) -> Bool {
      return lhs.className == rhs.className
 }
 
-
 // TODO is there a something already in SWIFT?
 internal class ClassDefinition : Hashable, Equatable {
     
@@ -116,8 +122,36 @@ internal class ClassDefinition : Hashable, Equatable {
             return className.hash
         }
     }
-    
+}
 
+extension NSData {
+    
+    func stringDataLength(offset : Int = 0) -> UInt {
+        var utf8 = UnsafePointer<Int8>(self.bytes + offset)
+        return strlen(utf8) + 1 // +1 for zero termination
+    }
+    
+    static func encode(string: String) -> NSMutableData {
+        // encode with "dataUsingEncoding"
+        var zero : UInt8 = 0
+        
+        var mutableData = NSMutableData()
+        
+        var data = string.dataUsingEncoding(NSUTF8StringEncoding)
+        
+        if data != nil {
+            mutableData.appendData(data!)
+        }
+        
+        // write zero termination
+        mutableData.appendBytes(&zero, length: sizeof(UInt8))
+        
+        return mutableData
+    }
+    
+    func decodeStringData() -> String? {
+        return String.fromCString(UnsafePointer<CChar>(self.bytes))
+    }
 }
 
 typealias Index = Int
@@ -128,16 +162,6 @@ public class FastCoder {
         return FCParseData(data)
     }
 
-    /**
-    public static func objectWithData(data : NSData) -> NSObject? {
-        var output : NSObject? = nil
-        
-        
-        return output
-    }
-*/
-    
-    
     public static func  dataWithRootObject(object : NSObject) -> NSData? {
         
         var output : NSMutableData! = NSMutableData(length: 0) // TODO: define default size
@@ -193,85 +217,193 @@ public class FastCoder {
         
     }
     
-    static func FCParseData( data: NSData) -> NSObject? {
+    static func FCParseData(data: NSData) -> NSObject? {
         // TODO: FCTypeConstructor *constructors[]
         
         let length = data.length
-        
+        let offset = 0 // sizeof(FCHeader)
+
         /**
         if length < sizeof(FCHeader) {
             //not a valid FastArchive
             return nil
         }
+
+        var header = FCHeader()
+        data.getBytes(&header,length: sizeof(FCHeader))
+        if (header.identifier != FCIdentifier) { return nil }
+        if (header.majorVersion < 2 || header.majorVersion > FCMajorVersion) {
+            NSLog("This version of the FastCoding library doesn't support FastCoding version %i.%i files", header.majorVersion, header.minorVersion)
+            return nil
+        }
+        
         */
         
+        var decoder = FCDecoder()
+        decoder.data = data
+        decoder.total = length
+        //decoder.constructors = constructors
+        
+        // objectCache
+        let objectCacheInitCapacity = Int(FCReadRawUInt32(decoder))
+        decoder.objectCache = NSMutableData(capacity: objectCacheInitCapacity)
+        
+        // NO SUPPORT FOR OLDER FILES
+        
+        // classCache
+        let classCacheInitCapacity = Int(FCReadRawUInt32(decoder))
+        decoder.classCache = NSMutableData(capacity: classCacheInitCapacity)
+        
+        // stringCache
+        let stringCacheInitCapacity = Int(FCReadRawUInt32(decoder))
+        decoder.stringCache = NSMutableData(capacity: stringCacheInitCapacity)
+
+        
+        //__autoreleasing NSMutableArray *propertyDictionaryPool = CFBridgingRelease(CFArrayCreateMutable(NULL, 0, NULL));
+        //decoder->_propertyDictionaryPool = propertyDictionaryPool;
+        
+        // NO DIAGNOSTIC
+    
+        return FCReadObject(decoder)
+    }
+    
+    // MARK: Read Methode
+    
+    static func FCReadValue<T>(decoder :FCDecoder) -> T {
+        
+        // FC_ASSERT_FITS (sizeof(type), offset, total)
+        var value : T! = nil
+        let size = sizeof(T)
+        let data = decoder.getDataSection(size)
+        data.getBytes(&value, length:size)
+        
+        return value
+    }
+    
+    static func FCReadRawUInt32(decoder : FCDecoder) -> UInt32 {
+        
+        return FCReadValue(decoder)
+        
+        //var value : UInt32 = 0
+        //decoder.data.getBytes(&value,length: sizeof(UInt32))
+    }
+    
+    static func FCReadRawString(decoder : FCDecoder) -> String? {
+        
+        // get the data size of the string
+        var stringLength = decoder.data.stringDataLength(offset: decoder.location)
+        
+        if stringLength > 1 {
+            var stringData = decoder.getDataSection(Int(stringLength))
+            
+            return stringData.decodeStringData()
+        }
+        
+        return ""
+    }
+    
+    
+    static func FCReadString(decoder : FCDecoder) -> String {
+        var string = FCReadRawString(decoder)
+        //TODO: add to c
+        // FCCacheParsedObject(string, decoder->_stringCache);
+        if string != nil {
+            return string!
+        }
+        
+        assertionFailure("ReadRaw should never return a nil string")
+        return ""
+    }
+
+    static func FCReadType(decoder : FCDecoder) -> FCType? {
+        
+        var value : UInt8 = FCReadValue(decoder)
+        
+        return FCType(rawValue: value)
+    }
+    
+    
+
+    static func FCReadNSCodedObject(decoder : FCDecoder) -> NSObject? {
         return nil
     }
     
+    
     /**
     
-    //read header
-    FCHeader header;
-    const void *input = data.bytes;
-    memcpy(&header, input, sizeof(header));
-    if (header.identifier != FCIdentifier)
-    {
-    //not a FastArchive
-    return nil;
+    // it seems this code lead to a segmentation fault in the compiler
+    
+    static func FCReadNSCodedObject(decoder : FCDecoder) -> NSObject? {
+        
+        var className = FCReadObject(decoder) as! String
+        var oldProperties = decoder.properties
+        
+        /**
+        // NO PropertyDictionaryPool support not enabled
+        //
+        
+        if (decoder.propertyDictionaryPool.count > 0) {
+            decoder.properties = decoder.propertyDictionaryPool.last!
+            decoder.propertyDictionaryPool.removeLast()
+            decoder.properties.removeAll(keepCapacity: true)
+        }
+        */
+        decoder.properties = Dictionary()
+        
+        while (true) {
+            // read all elements as input for initWithCoder:
+            var object = FCReadObject(decoder)
+            if object != nil { break }
+            var key = FCReadObject(decoder)as! String
+            decoder.properties[key] = object
+        }
+        
+        let objClass = NSClassFromString(className) as! NSCoding.Type
+        var object = objClass(coder: decoder)
+        //decoder.propertyDictionaryPool.append(decoder.properties)
+        decoder.properties = oldProperties
+        
+        return object as? NSObject
     }
-    if (header.majorVersion < 2 || header.majorVersion > FCMajorVersion)
-    {
-    //not compatible
-    NSLog(@"This version of the FastCoding library doesn't support FastCoding version %i.%i files", header.majorVersion, header.minorVersion);
-    return nil;
-    }
-    
-    //create decoder
-    NSUInteger offset = sizeof(header);
-    FCNSDecoder *decoder = FC_AUTORELEASE([[FCNSDecoder alloc] init]);
-    decoder->_constructors = constructors;
-    decoder->_input = input;
-    decoder->_offset = &offset;
-    decoder->_total = length;
-    
-    //read data
-    __autoreleasing NSMutableData *objectCache = [NSMutableData dataWithCapacity:FCReadRawUInt32(decoder) * sizeof(id)];
-    decoder->_objectCache = objectCache;
-    if (header.majorVersion < 3)
-    {
-    return FCReadObject_2_3(decoder);
-    }
-    else
-    {
-    __autoreleasing NSMutableData *classCache = [NSMutableData dataWithCapacity:FCReadRawUInt32(decoder) * sizeof(id)];
-    __autoreleasing NSMutableData *stringCache = [NSMutableData dataWithCapacity:FCReadRawUInt32(decoder) * sizeof(id)];
-    __autoreleasing NSMutableArray *propertyDictionaryPool = CFBridgingRelease(CFArrayCreateMutable(NULL, 0, NULL));
-    
-    decoder->_classCache = classCache;
-    decoder->_stringCache = stringCache;
-    decoder->_propertyDictionaryPool = propertyDictionaryPool;
-    
-    #if FC_DIAGNOSTIC_ENABLED
-    
-    printf("Input cache:\n");
-    
-    #endif
-    
-    @try
-    {
-    return FCReadObject(decoder);
-    }
-    @catch (NSException *exception)
-    {
-    NSLog(@"%@", [exception reason]);
-    return nil;
-    }
-    }
-    }
-    */
-    
+
+*/
 
     
+    static func FCReadObject(decoder : FCDecoder) -> NSObject? {
+        
+        var type = FCReadType(decoder)
+        
+        if type != nil {
+            switch type! {
+            case .FCTypeNil:
+                return nil
+            case .FCTypeNull:
+                return NSNull()
+            case .FCTypeString:
+                return FCReadString(decoder)
+            case .FCTypeStringAlias8:
+                assertionFailure("Not supported yet")
+            case .FCTypeStringAlias16:
+                assertionFailure("Not supported yet")
+            case .FCTypeStringAlias32:
+                assertionFailure("Not supported yet")
+            case .FCTypeNSCodedObject:
+                return FCReadNSCodedObject(decoder)
+            case .FCTypeObjectAlias8:
+                assertionFailure("Not supported yet")
+            case .FCTypeObjectAlias16:
+                assertionFailure("Not supported yet")
+            case .FCTypeObjectAlias32:
+                assertionFailure("Not supported yet")
+            default:
+                assertionFailure("Not supported type")
+            }
+            
+        }
+    
+        
+        return nil
+    }
     
     // MARK: Write Methode
     
@@ -454,6 +586,12 @@ public class FastCoder {
 
 extension NSObject {
     
+    
+    // Encode the following elements:
+    // - Type:FCTypeNSCodedObject
+    // - ClassName as String
+    // - call "encodeWithCoder"
+    // - NIL (Why? as termination?)
     @objc public func FC_encodeWithCoder(aCoder: FCCoder) {
         // TODO
         
@@ -464,6 +602,7 @@ extension NSObject {
         
         if self is NSCoding {
             FastCoder.FCWriteType(.FCTypeNSCodedObject, output: aCoder.output)
+            
             FastCoder.FCWriteObject(NSStringFromClass(self.classForCoder), coder: aCoder)
             (self as! NSCoding).encodeWithCoder(aCoder)
             FastCoder.FCWriteType(.FCTypeNil, output: aCoder.output)
@@ -663,8 +802,14 @@ public class FCCoder : NSCoder {
     }
     
     override public func encodeInt(intv: Int32, forKey key: String) {
-        FastCoder.FCWriteObject(NSNumber(int: intv), coder: self)
+        FastCoder.FCWriteType(FCType.FCTypeInt32, output: output)
+        FastCoder.FCWriteInt32(intv, output: output)
         FastCoder.FCWriteObject(key, coder: self)
+        
+        
+        // original
+        //FastCoder.FCWriteObject(NSNumber(int: intv), coder: self)
+        //FastCoder.FCWriteObject(key, coder: self)
     }
     
     override public func encodeInt32(intv: Int32, forKey key: String) {
@@ -701,19 +846,27 @@ public class FCCoder : NSCoder {
 
 class FCDecoder : NSCoder {
     
-    var offset : UInt64 = 0
-    // const void *_input
-    var total : UInt64 = 0
+    var data : NSData! = nil
+    var total = 0
     
-    var objectCache : NSData! = nil
-    var classCache : NSData! = nil
-    var stringCache : NSData! = nil
+    var objectCache : NSMutableData! = nil
+    var classCache : NSMutableData! = nil
+    var stringCache : NSMutableData! = nil
     
-    //FCTypeConstructor **_constructors;
-    //__unsafe_unretained NSData *_objectCache;
-    //__unsafe_unretained NSData *_classCache;
-    //__unsafe_unretained NSData *_stringCache;
-    //__unsafe_unretained NSMutableArray *_propertyDictionaryPool;
-    //__unsafe_unretained NSMutableDictionary *_properties;
+    var properties = Dictionary<String,NSObject>()
+    //var propertyDictionaryPool = Array<Dictionary<String,NSObject>>()
     
+    // data for NSRange
+    var location = 0
+    func dataRange(length : Int) -> NSRange {
+        var result =  NSRange(location: location, length: length)
+        
+        location += length
+        
+        return result
+    }
+    
+    func getDataSection(length : Int) -> NSData {
+        return data.subdataWithRange(dataRange(length))
+    }
 }
