@@ -21,7 +21,8 @@
 //  This port do NOT support at the moment:
 //  - The FastCoding "protocol"
 //  - support for older major versions (2_3 methodes)
-//  - NSCoder.encodeConditionalObject (the implementation in FastCoder is not correct)
+//  - NSCoder.encodeConditionalObject (the implementation in FastCoder ObjC is not correct not)
+//  - Complex object cycles obj1 <-> obj2 (the implementation of on FastCoder ObjC is not correct too)
 //  - support "propertyListWithData"
 //  - support for NSArray / NSMutableArray
 //  - support for NSDictionary / NSMutableDictionary
@@ -342,11 +343,11 @@ public class FastCoder {
     static func FCReadRawString(decoder : FCDecoder) -> String? {
         
         // get the data size of the string
-        var stringLength = decoder.stringDataLength() // data.stringDataLength(offset: decoder.location)
+        let stringLength = decoder.stringDataLength() // data.stringDataLength(offset: decoder.location)
+        let stringData = decoder.getDataSection(Int(stringLength))
         
         if stringLength > 1 {
-            var stringData = decoder.getDataSection(Int(stringLength))
-            
+        
             return stringData.decodeStringData()
         }
         
@@ -425,7 +426,7 @@ public class FastCoder {
             // read all elements as input for initWithCoder:
             var object = FCReadObject(decoder)
             if object == nil { break } // nil termination
-            var key = FCReadObject(decoder)as! String
+            var key = FCReadObject(decoder) as! String
             decoder.properties[key] = object
         }
         
@@ -809,13 +810,18 @@ extension NSObject {
         //not support for "preferFastCoding"
         
         if self is NSCoding {
-            FastCoder.FCWriteType(.FCTypeNSCodedObject, output: aCoder.output)
-            
-            FastCoder.FCWriteObject(NSStringFromClass(self.classForCoder), coder: aCoder)
-            (self as! NSCoding).encodeWithCoder(aCoder)
-            FastCoder.FCWriteType(.FCTypeNil, output: aCoder.output)
+            // first put into cache !
             aCoder.FCCacheWrittenObject(self)
             
+            // write type and class name
+            FastCoder.FCWriteType(.FCTypeNSCodedObject, output: aCoder.output)
+            FastCoder.FCWriteObject(NSStringFromClass(self.classForCoder), coder: aCoder)
+            
+            // encode all elements of the obj
+            (self as! NSCoding).encodeWithCoder(aCoder)
+            
+            // write nil termination 
+            FastCoder.FCWriteType(.FCTypeNil, output: aCoder.output)
         } else {
             //let className = toString(self).componentsSeparatedByString(".").last!
             assertionFailure("Class \"\(self)\" don't support NSCodings")
