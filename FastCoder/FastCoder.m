@@ -2036,7 +2036,9 @@ static void FCWriteObject(__unsafe_unretained id object, __unsafe_unretained FCN
     }
     else
     {
-        [NSException raise:FastCodingException format:@"Unable to encode NSValue data of type %s", type];
+        //[NSException raise:FastCodingException format:@"Unable to encode NSValue data of type %s", type];
+        // patch
+        [NSException raise:FastCodingException format:@"Unable to encode NSValue data"];
     }
 }
 
