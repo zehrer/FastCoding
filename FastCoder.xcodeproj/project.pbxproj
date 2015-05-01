@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		AA2526551AE780E800B4767A /* FastCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2526511AE780E800B4767A /* FastCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AA2526561AE780E800B4767A /* FastCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = AA2526521AE780E800B4767A /* FastCoder.m */; };
-		AA2526591AE782C200B4767A /* FastCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2526531AE780E800B4767A /* FastCoding.h */; };
+		AA2526591AE782C200B4767A /* FastCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2526531AE780E800B4767A /* FastCoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AA2526881AE784DD00B4767A /* FastCoding.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA25267D1AE784DC00B4767A /* FastCoding.framework */; };
 		AA2526991AE7868D00B4767A /* FastCoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2526981AE7868D00B4767A /* FastCoderTests.swift */; };
 		AA25269E1AE786FE00B4767A /* FastCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25269D1AE786FE00B4767A /* FastCoder.swift */; };
@@ -39,7 +39,7 @@
 		AA2526871AE784DC00B4767A /* FastCoderTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FastCoderTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA2526981AE7868D00B4767A /* FastCoderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FastCoderTests.swift; path = Tests/SWIFT/FastCoderTests.swift; sourceTree = SOURCE_ROOT; };
 		AA25269A1AE7869800B4767A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Tests/SWIFT/Info.plist; sourceTree = SOURCE_ROOT; };
-		AA25269D1AE786FE00B4767A /* FastCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FastCoder.swift; sourceTree = "<group>"; };
+		AA25269D1AE786FE00B4767A /* FastCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = FastCoder.swift; sourceTree = "<group>"; };
 		AAD957561AED6832002C7446 /* ObjCHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjCHelper.h; sourceTree = "<group>"; };
 		AAD957571AED6832002C7446 /* ObjCHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjCHelper.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -340,6 +340,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -396,6 +397,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
