@@ -54,6 +54,37 @@
 
 @end
 
+// Test Data for NSCoding support
+@interface NSCoderModel : NSObject <NSCoding>
+@property (nonatomic, strong) NSString *text;
+
+@property (nonatomic, strong) NSCoderModel *nextObj;
+@property (nonatomic, weak) NSCoderModel *prevObj;
+
+
+@end
+
+@implementation NSCoderModel
+
+    
+    - (id)initWithCoder:(NSCoder *)aDecoder {
+        self = [super init];
+        if (self) {
+            self.text = [aDecoder decodeObjectForKey:@"1"];
+            self.nextObj = [aDecoder decodeObjectForKey:@"2"];
+            self.prevObj = [aDecoder decodeObjectForKey:@"3"];
+        }
+        return self;
+    }
+
+    - (void)encodeWithCoder:(NSCoder *)aCoder {
+        [aCoder encodeObject:self.text forKey:@"1"];
+        [aCoder encodeObject:self.nextObj forKey:@"2"];
+        [aCoder encodeObject:self.prevObj forKey:@"3"];
+    }
+
+@end
+
 
 @interface FastCoderTests : XCTestCase
 
@@ -203,6 +234,23 @@
   
     //check
     XCTAssertEqualObjects([input class], [output class]);
+}
+
+// test faild in FastCoder (objc version)
+- (void)testObjectCycles
+{
+    NSCoderModel *rootObj = [[NSCoderModel alloc]init];
+    NSCoderModel *subObj = [[NSCoderModel alloc]init];
+    
+    rootObj.nextObj = subObj;
+    subObj.prevObj = rootObj;
+    
+    //convert to FastCoded data
+    NSData *data = [FastCoder dataWithRootObject:rootObj];
+    NSArray *output = [FastCoder objectWithData:data];
+    
+    //check
+    XCTAssertEqualObjects(rootObj,output);
 }
 
 @end
