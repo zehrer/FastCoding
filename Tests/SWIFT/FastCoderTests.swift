@@ -7,9 +7,10 @@
 //
 
 import Cocoa
-//import FastCoding
-import FastCoder
+import FastCoding
+//import FastCoder
 import XCTest
+
 
 
 class Model : NSObject, NSCoding, Equatable{
@@ -17,37 +18,34 @@ class Model : NSObject, NSCoding, Equatable{
     //var array1 = NSArray()
     //var array2 = NSArray()
 
-    var nextObj : Model? = nil
+    var nextObj1 : Model? = nil
+    var nextObj2 : Model? = nil
     weak var prevObj : Model? = nil
     
     required override init() {
         
     }
-    
-    required init(prevObj : Model) {
-        self.prevObj = prevObj
-        super.init()
-        prevObj.nextObj = self
-    }
-    
     required init(coder aDecoder: NSCoder) {
         text = aDecoder.decodeObjectForKey("1") as! String
-        nextObj = aDecoder.decodeObjectForKey("2") as? Model
-        prevObj = aDecoder.decodeObjectForKey("3") as? Model
+        nextObj1 = aDecoder.decodeObjectForKey("2") as? Model
+        nextObj2 = aDecoder.decodeObjectForKey("3") as? Model
+        prevObj = aDecoder.decodeObjectForKey("4") as? Model
     }
     
     func encodeWithCoder(aCoder: NSCoder) {
         aCoder.encodeObject(text, forKey: "1")
-        aCoder.encodeObject(nextObj, forKey: "2")
-        aCoder.encodeObject(prevObj, forKey: "3")
+        aCoder.encodeObject(nextObj1, forKey: "2")
+        aCoder.encodeObject(nextObj2, forKey: "3")
+        aCoder.encodeObject(prevObj, forKey: "4")
     }
 }
 
 
 func ==(lhs: Model  , rhs: Model) -> Bool {
     return lhs.text == rhs.text &&
-    lhs.nextObj === rhs.nextObj &&
-    lhs.prevObj === rhs.prevObj
+    lhs.nextObj1 == rhs.nextObj1 &&
+    lhs.nextObj2 == rhs.nextObj2 &&
+    lhs.prevObj == rhs.prevObj
     
     /*
             ((!lhs.array1 && !rhs.array1) || lhs.array1 == rhs.array1) &&
@@ -88,14 +86,34 @@ class FastCoderTests: XCTestCase {
 
     }
     
-    func testAliasing() {
+    // the current implementation is not able to handle cycles
+    // both FastCoder Swift & FastCoder ObjC
+    func testObjectCycles() {
         var rootObj = Model()
-        var obj1 = Model(prevObj: rootObj)
+        var subObj = Model()
+        rootObj.nextObj1 = subObj
+        subObj.prevObj = rootObj
         
         var newModel = runFastCoder(rootObj)
         //XCTAssertTrue(model == newModel, "Model not equal")
         XCTAssertEqual(rootObj, newModel, "Model not equal")
     }
+    
+    func testAliasing() {
+        var rootObj = Model()
+        var obj1 = Model()
+        rootObj.nextObj1 = obj1
+        var obj2 = Model()
+        rootObj.nextObj2 = obj2
+        var obj3 = Model()
+        obj1.nextObj1 = obj3
+        obj2.nextObj1 = obj3
+        
+        var newModel = runFastCoder(rootObj)
+        XCTAssertEqual(rootObj, newModel, "Model not equal")
+        
+    }
+    
     
 }
 
