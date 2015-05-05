@@ -293,18 +293,6 @@ public class FastCoder {
     
     // MARK: Read Methode
     
-    /*
-    static func FCReadValue<T>(decoder :FCDecoder) -> T {
-        
-        // FC_ASSERT_FITS (sizeof(type), offset, total)
-        var value : T! = nil
-        let size = sizeof(T)
-        let data = decoder.getDataSection(size)
-        data.getBytes(&value, length:size)
-        
-        return value
-    }*/
-    
     static func FCReadValue<T>(inout value:T, decoder: FCDecoder) {
         let size = sizeof(T)
         let data = decoder.getDataSection(size)
@@ -412,15 +400,58 @@ public class FastCoder {
     
     static func FCReadMutableString(decoder : FCDecoder) -> String {
         
+        assertionFailure("No support for MutableString")
         return ""
     }
     
-    /**
-    static func FCReadMutableString(decoder : FCDecoder) -> NSMutableString {
+    static func FCReadArray(decoder : FCDecoder) -> NSMutableArray {
         
-        assertionFailure("No support for MutableString")
+        var result = NSMutableArray()
+        
+        while (true) {
+            
+            var type = FCReadType(decoder)
+            
+            if type == .FCTypeEnd {
+                break;
+            }
+            
+            var object = FCReadObject(type, decoder: decoder)
+            if object != nil {
+                 result.addObject(object!)
+            }
+        }
+        
+        decoder.objectCache.append(result)
+        
+        return result
     }
-    */
+    
+/**
+static id FCReadArray(__unsafe_unretained FCNSDecoder *decoder)
+{
+    FC_ALIGN_INPUT(uint32_t, *decoder->_offset);
+    uint32_t count = FCReadRawUInt32(decoder);
+    __autoreleasing NSArray *array = nil;
+    if (count)
+    {
+        __autoreleasing id *objects = (__autoreleasing id *)malloc(count * sizeof(id));
+        for (uint32_t i = 0; i < count; i++)
+        {
+            objects[i] = FCReadObject(decoder);
+        }
+        array = [NSArray arrayWithObjects:objects count:count];
+        free(objects);
+    }
+    else
+    {
+        array = @[];
+    }
+    FCCacheParsedObject(array, decoder->_objectCache);
+    return array;
+}
+
+*/
 
 
     static func FCReadNSCodedObject(decoder : FCDecoder) -> NSObject? {
@@ -573,6 +604,9 @@ static id FCReadInt8(__unsafe_unretained FCNSDecoder *decoder)
             return FCReadStringAlias32(decoder)
         case .FCTypeString:
             return FCReadString(decoder)
+        //case .FCTypeDictionary:
+        case .FCTypeArray:
+            return FCReadArray(decoder)
         case .FCTypeTrue:
             return true
         case .FCTypeFalse:
@@ -912,6 +946,28 @@ extension NSDictionary {
     @objc override public func FC_encodeWithCoder(aCoder: FCCoder) {
         assertionFailure("Not supported object type")
     }
+}
+
+
+extension NSArray {
+    
+    @objc override public func FC_encodeWithCoder(aCoder: FCCoder) {
+        if FastCoder.FCWriteObjectAlias(self, coder: aCoder) { return }
+        
+        //var mutable = self is NSMutableArray
+        
+        FastCoder.FCWriteType(.FCTypeArray, output:aCoder.output)
+        
+        for item in self {
+            FastCoder.FCWriteObject(item, coder: aCoder)
+        }
+        
+        FastCoder.FCWriteType(.FCTypeEnd, output:aCoder.output)
+        
+        aCoder.FCCacheWrittenObject(self)
+
+    }
+
 }
 
 extension NSSet {
