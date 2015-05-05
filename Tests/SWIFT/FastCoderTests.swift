@@ -25,6 +25,7 @@ class Model : NSObject, NSCoding, Equatable{
     required override init() {
         
     }
+    
     required init(coder aDecoder: NSCoder) {
         text = aDecoder.decodeObjectForKey("1") as! String
         nextObj1 = aDecoder.decodeObjectForKey("2") as? Model
@@ -47,24 +48,23 @@ func ==(lhs: Model  , rhs: Model) -> Bool {
     lhs.nextObj2 == rhs.nextObj2 &&
     lhs.prevObj == rhs.prevObj
     
-    /*
-            ((!lhs.array1 && !rhs.array1) || lhs.array1 == rhs.array1) &&
-            ((!lhs.array2 && !rhs.array2) || lhs.array2 == rhs.array2)
-*/
+    /**
+    nil handling not required, no optionals as input
+    */
 }
 
 
 
 class FastCoderTests: XCTestCase {
     
-    func runFastCoder(obj: Model) -> Model {
+    func runFastCoder(obj: NSObject) -> NSObject {
         var data = FastCoder.dataWithRootObject(obj)
         
         if data != nil {
-            var newModel = FastCoder.objectWithData(data!) as? Model
+            var obj = FastCoder.objectWithData(data!)
             
-            if newModel != nil {
-                return newModel!
+            if obj != nil {
+                return obj!
             } else {
                 XCTFail("Result is nil")
             }
@@ -72,7 +72,7 @@ class FastCoderTests: XCTestCase {
         
         //XCTFail("Data is nil")
         assertionFailure("Data is nil")
-        return Model()
+        return ""
     }
     
     func testChangingModel() {
@@ -80,7 +80,8 @@ class FastCoderTests: XCTestCase {
         rootObj.text = "foo"
         // array not supported
         
-        var newModel = runFastCoder(rootObj)
+        var newModel = runFastCoder(rootObj) as! Model
+        
         //XCTAssertTrue(model == newModel, "Model not equal")
         XCTAssertEqual(rootObj, newModel, "Model not equal")
 
@@ -94,9 +95,23 @@ class FastCoderTests: XCTestCase {
         rootObj.nextObj1 = subObj
         subObj.prevObj = rootObj
         
-        var newModel = runFastCoder(rootObj)
+        var newModel = runFastCoder(rootObj) as! Model
+        
         //XCTAssertTrue(model == newModel, "Model not equal")
         XCTAssertEqual(rootObj, newModel, "Model not equal")
+    }
+    
+    func testObjectCycles2() {
+        var rootObj = Model()
+        var subObj = Model()
+        rootObj.nextObj1 = subObj
+        subObj.prevObj = rootObj
+        
+        var data = NSKeyedArchiver.archivedDataWithRootObject(rootObj)
+        var newModel = NSKeyedUnarchiver.unarchiveObjectWithData(data) as? Model
+        
+        XCTAssertTrue(rootObj == newModel, "Model not equal")
+        //XCTAssertEqual(rootObj, newModel!, "Model not equal")
     }
     
     func testAliasing() {
@@ -109,45 +124,46 @@ class FastCoderTests: XCTestCase {
         obj1.nextObj1 = obj3
         obj2.nextObj1 = obj3
         
-        var newModel = runFastCoder(rootObj)
+        var newModel = runFastCoder(rootObj) as! Model
         XCTAssertEqual(rootObj, newModel, "Model not equal")
         
     }
     
+    func testAliasingWithSubstitution() {
+        var rootObj = Model()
+        var array = NSMutableArray()
+        array.addObject(rootObj)
+        array.addObject(rootObj)
+        
+        //var array = [rootObj, rootObj]
+        
+        var newModel = runFastCoder(array) as! NSArray
+        var o1 = newModel[0] as! Model
+        var o2 = newModel[1] as! Model
+        
+        //XCTAssertEqual(o1, o2, "Not the same obj")
+        XCTAssertTrue(o1 === o2, "Model not identical")
+        XCTAssertEqual(rootObj, o1, "Model not equal")
+        XCTAssertEqual(rootObj, o2, "Model not equal")
+    }
     
 }
 
 /**
-
-- (void)testAliasing
+- (void)testAliasingWithSubstitution
 {
-    __strong Model *model = [[Model alloc] init];
-    model.array1 = @[@1, @2];
-    model.array2 = model.array1;
+    Model *model = [[Model alloc] init];
+    NSArray *array = @[model, model];
     
     //seralialize
-    NSData *data = [FastCoder dataWithRootObject:model];
+    NSData *data = [FastCoder dataWithRootObject:array];
     
-    //load as new model
-    model = [FastCoder objectWithData:data];
-    
-    //check properties
-    XCTAssertNotNil(model);
-    XCTAssertEqualObjects(model.array1, model.array2);
-    XCTAssertEqual(model.array1, model.array2);
-    
-    //now make them different but equal
-    model.array2 = @[@1, @2];
-    
-    //seralialize
-    data = [FastCoder dataWithRootObject:model];
-    
-    //load as new model
-    model = [FastCoder objectWithData:data];
+    //deserialize
+    array = [FastCoder objectWithData:data];
     
     //check properties
-    XCTAssertEqualObjects(model.array1, model.array2);
-    XCTAssertNotEqual(model.array1, model.array2);
+    XCTAssertEqual(array[0], array[1]);
 }
+
 */
 
