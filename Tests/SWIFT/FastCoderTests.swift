@@ -48,11 +48,8 @@ func ==(lhs: Model  , rhs: Model) -> Bool {
     lhs.nextObj2 == rhs.nextObj2 &&
     lhs.prevObj == rhs.prevObj
     
-    /**
-    nil handling not required, no optionals as input
-    */
+    // TODO: nextObj1, ... may be nil
 }
-
 
 
 class FastCoderTests: XCTestCase {
@@ -148,22 +145,4 @@ class FastCoderTests: XCTestCase {
     }
     
 }
-
-/**
-- (void)testAliasingWithSubstitution
-{
-    Model *model = [[Model alloc] init];
-    NSArray *array = @[model, model];
-    
-    //seralialize
-    NSData *data = [FastCoder dataWithRootObject:array];
-    
-    //deserialize
-    array = [FastCoder objectWithData:data];
-    
-    //check properties
-    XCTAssertEqual(array[0], array[1]);
-}
-
-*/
 
