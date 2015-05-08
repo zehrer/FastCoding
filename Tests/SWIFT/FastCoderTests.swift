@@ -43,12 +43,15 @@ class Model : NSObject, NSCoding, Equatable{
 
 
 func ==(lhs: Model  , rhs: Model) -> Bool {
-    return lhs.text == rhs.text &&
-    lhs.nextObj1 == rhs.nextObj1 &&
-    lhs.nextObj2 == rhs.nextObj2 &&
-    lhs.prevObj == rhs.prevObj
-    
+    return  lhs.text == rhs.text &&
+    ((lhs.nextObj1 == nil && rhs.nextObj1 == nil) || (lhs.nextObj1! == rhs.nextObj1! )) &&
+    ((lhs.nextObj2 == nil && rhs.nextObj2 == nil) || (lhs.nextObj2! == rhs.nextObj2! )) &&
+    ((lhs.prevObj == nil && rhs.prevObj == nil) || (lhs.prevObj != nil && rhs.prevObj != nil))
+
     // TODO: nextObj1, ... may be nil
+    
+    //
+
 }
 
 
@@ -98,6 +101,8 @@ class FastCoderTests: XCTestCase {
         XCTAssertEqual(rootObj, newModel, "Model not equal")
     }
     
+    
+    //
     func testObjectCycles2() {
         var rootObj = Model()
         var subObj = Model()
