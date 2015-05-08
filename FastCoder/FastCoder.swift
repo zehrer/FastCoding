@@ -1,7 +1,7 @@
 //
 //  FastCoding.swift
 //
-//  Version 0.1
+//  Version 0.5
 //
 //  Created by Stephan Zehrer 04/21/2015
 //  Copyright (c) 2015 Stephan Zehrer
@@ -74,58 +74,6 @@ struct FCHeader {
     let minorVersion : UInt16 = 0
 }
 
-enum FCType : UInt8 {
-        case FCTypeNil = 0
-        case FCTypeNull
-        case FCTypeObjectAlias8
-        case FCTypeObjectAlias16
-        case FCTypeObjectAlias32
-        case FCTypeStringAlias8
-        case FCTypeStringAlias16
-        case FCTypeStringAlias32
-        case FCTypeString
-        case FCTypeDictionary
-        case FCTypeArray
-        case FCTypeSet
-        case FCTypeOrderedSet
-        case FCTypeTrue
-        case FCTypeFalse
-        case FCTypeInt8
-        case FCTypeInt16
-        case FCTypeInt32
-        case FCTypeInt64
-        case FCTypeFloat32
-        case FCTypeFloat64
-        case FCTypeData
-        case FCTypeDate
-        case FCTypeMutableString
-        case FCTypeMutableDictionary
-        case FCTypeMutableArray
-        case FCTypeMutableSet
-        case FCTypeMutableOrderedSet
-        case FCTypeMutableData
-        case FCTypeClassDefinition
-        case FCTypeObject8
-        case FCTypeObject16
-        case FCTypeObject32
-        case FCTypeURL
-        case FCTypePoint
-        case FCTypeSize
-        case FCTypeRect
-        case FCTypeRange
-        case FCTypeVector
-        case FCTypeAffineTransform
-        case FCType3DTransform
-        case FCTypeMutableIndexSet
-        case FCTypeIndexSet
-        case FCTypeNSCodedObject
-        case FCTypeDecimalNumber
-        case FCTypeOne
-        case FCTypeZero
-        case FCTypeEnd  // mark a end (e.g. end of a list)
-    
-        case FCTypeUnknown // renamed FCTypeCount (entinel value)
-}
 
 func ==(lhs: ClassDefinition, rhs: ClassDefinition) -> Bool {
      return lhs.className == rhs.className
@@ -184,6 +132,60 @@ extension NSMutableData {
 typealias Index = Int
 
 public class FastCoder {
+    
+    enum FCType : UInt8 {
+        case FCTypeNil = 0
+        case FCTypeNull
+        case FCTypeObjectAlias8
+        case FCTypeObjectAlias16
+        case FCTypeObjectAlias32
+        case FCTypeStringAlias8
+        case FCTypeStringAlias16
+        case FCTypeStringAlias32
+        case FCTypeString
+        case FCTypeDictionary
+        case FCTypeArray
+        case FCTypeSet
+        case FCTypeOrderedSet
+        case FCTypeTrue
+        case FCTypeFalse
+        case FCTypeInt8
+        case FCTypeInt16
+        case FCTypeInt32
+        case FCTypeInt64
+        case FCTypeFloat32
+        case FCTypeFloat64
+        case FCTypeData
+        case FCTypeDate
+        case FCTypeMutableString
+        case FCTypeMutableDictionary
+        case FCTypeMutableArray
+        case FCTypeMutableSet
+        case FCTypeMutableOrderedSet
+        case FCTypeMutableData
+        case FCTypeClassDefinition
+        case FCTypeObject8
+        case FCTypeObject16
+        case FCTypeObject32
+        case FCTypeURL
+        case FCTypePoint
+        case FCTypeSize
+        case FCTypeRect
+        case FCTypeRange
+        case FCTypeVector
+        case FCTypeAffineTransform
+        case FCType3DTransform
+        case FCTypeMutableIndexSet
+        case FCTypeIndexSet
+        case FCTypeNSCodedObject
+        case FCTypeDecimalNumber
+        case FCTypeOne
+        case FCTypeZero
+        case FCTypeEnd  // mark a end (e.g. end of a list)
+        
+        case FCTypeUnknown // renamed FCTypeCount (entinel value)
+    }
+
     
     // write data
     public static func dataWithRootObject(object : NSObject) -> NSData? {
@@ -381,7 +383,7 @@ public class FastCoder {
     }
     
     static func FCReadStringAlias32(decoder : FCDecoder) -> NSObject? {
-        let index = FCReadRawUInt16(decoder)
+        let index = FCReadRawUInt32(decoder)
         
         return decoder.stringCache[Int(index)]
     }
@@ -477,6 +479,10 @@ static id FCReadArray(__unsafe_unretained FCNSDecoder *decoder)
         //let objClass = NSClassFromString(className) as! NSCoding.Type
         // it seems this code lead to a segmentation fault in the compiler
         //var object : NSObject = objClass(coder: decoder) as! NSObject
+        
+        //let objClass: AnyClass! = NSClassFromString(className)
+        //let codingClass = objClass as! NSCoding.Type
+        //var object = codingClass.init(coder: decoder)
         
         var object = ObjCHelper.initClass(className, withCoder: decoder)
         
@@ -1096,7 +1102,7 @@ public class FCCoder : NSCoder {
     }
     
     override public func encodeInt(intv: Int32, forKey key: String) {
-        FastCoder.FCWriteType(FCType.FCTypeInt32, output: output)
+        FastCoder.FCWriteType(.FCTypeInt32, output: output)
         FastCoder.FCWriteInt32(intv, output: output)
         FastCoder.FCWriteObject(key, coder: self)
         
