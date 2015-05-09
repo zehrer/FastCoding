@@ -1,7 +1,7 @@
 //
 //  FastCoding.swift
 //
-//  Version 0.5
+//  Version 0.6
 //
 //  Created by Stephan Zehrer 04/21/2015
 //  Copyright (c) 2015 Stephan Zehrer
@@ -16,8 +16,8 @@
 //  - Replace as the NSKeyedArchiver / NSKeyedUnarchiver (TEST: TODO)
 //  - NSString
 //  - Int & UInt (8,16,32,64) and Float / Double
+//  - NSNumber (inc. UInt64 )
 //
-//  
 //  This port do NOT support at the moment:
 //  - The FastCoding "protocol"
 //  - support for older major versions (2_3 methodes)
