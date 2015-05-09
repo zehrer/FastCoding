@@ -962,18 +962,35 @@ extension NSNumber {
             var value = self.doubleValue
             //FC_ALIGN_OUTPUT(Float64, coder->_output);
             aCoder.output.appendBytes(&value, length:sizeof(Double))
+            
         case "Q":
             var value = self.unsignedLongLongValue
-            FastCoder.FCWriteType(.FCTypeUInt64, output:aCoder.output)
-            aCoder.output.appendBytes(&value, length:sizeof(UInt64))
+            if  value > UInt64(UInt32.max) {
+                FastCoder.FCWriteType(.FCTypeUInt64, output:aCoder.output)
+                aCoder.output.appendBytes(&value, length:sizeof(UInt64))
+            } else {
+                fallthrough
+            }
         case "L":
             var value = self.unsignedIntValue
-            FastCoder.FCWriteType(.FCTypeUInt32, output:aCoder.output)
-            aCoder.output.appendBytes(&value, length:sizeof(UInt32))
+            if  value > UInt32(UInt16.max) {
+                FastCoder.FCWriteType(.FCTypeUInt32, output:aCoder.output)
+                aCoder.output.appendBytes(&value, length:sizeof(UInt32))
+            } else {
+                fallthrough
+            }
         case "S":
             var value = self.unsignedShortValue
-            FastCoder.FCWriteType(.FCTypeUInt16, output:aCoder.output)
-            aCoder.output.appendBytes(&value, length:sizeof(UInt16))
+            if  value > UInt16(UInt8.max) {
+                FastCoder.FCWriteType(.FCTypeUInt16, output:aCoder.output)
+                aCoder.output.appendBytes(&value, length:sizeof(UInt16))
+            } else {
+                fallthrough
+            }
+        case "C":
+            var value = self.unsignedCharValue
+            FastCoder.FCWriteType(.FCTypeUInt8, output:aCoder.output)
+            aCoder.output.appendBytes(&value, length:sizeof(UInt8))
         case "q": //.SInt64Type, .LongLongType, .NSIntegerType:
             var value = self.longLongValue
             if (value > Int64(Int32.max)) || (value < Int64(Int32.min)) {
@@ -1002,7 +1019,7 @@ extension NSNumber {
             } else {
                 fallthrough
             }
-        case "c" , "C": //.SInt8Type, .CharType:
+        case "c": //.SInt8Type, .CharType:
             var value = self.charValue
             switch value {
             case 1:
@@ -1019,16 +1036,8 @@ extension NSNumber {
                     FastCoder.FCWriteType(.FCTypeZero, output:aCoder.output)
                 }
             default:
-                if type == "c" {
-                    // signed
-                    FastCoder.FCWriteType(.FCTypeInt8, output:aCoder.output)
-                    aCoder.output.appendBytes(&value, length:sizeof(Int8))
-                } else {
-                    // unsigned
-                    var value = self.unsignedCharValue
-                    FastCoder.FCWriteType(.FCTypeUInt8, output:aCoder.output)
-                    aCoder.output.appendBytes(&value, length:sizeof(UInt8))
-                }
+                FastCoder.FCWriteType(.FCTypeInt8, output:aCoder.output)
+                aCoder.output.appendBytes(&value, length:sizeof(Int8))
             }
         default:
             assertionFailure("Unhandeld type")

@@ -178,8 +178,6 @@ class FastCoderTests: XCTestCase {
         
         XCTAssertTrue(input == output , "object not equal")
         XCTAssertTrue(input.self == output.self, "Type not similar")
-        
-        
     }
     
     func testInt32() {
@@ -189,8 +187,6 @@ class FastCoderTests: XCTestCase {
         
         XCTAssertTrue(input == output , "object not equal")
         XCTAssertTrue(input.self == output.self, "Type not similar")
-        
-        
     }
     
     func testInt64() {
@@ -200,31 +196,47 @@ class FastCoderTests: XCTestCase {
         
         XCTAssertTrue(input == output , "object not equal")
         XCTAssertTrue(input.self == output.self, "Type not similar")
-        
-        
     }
-    
-    func testUInt32() {
-        var input = NSNumber(unsignedInt: UInt32.max)
-        
-        var output = runFastCoder(input)
-        
-        XCTAssertTrue(input == output , "object not equal")
-        XCTAssertTrue(input.self == output.self, "Type not similar")
-        
-        
-    }
-    
+
+    // encode as "Q" -> correct
     func testUInt64() {
         var input = NSNumber(unsignedLongLong: UInt64.max)
         
+        let type  = String.fromCString(input.objCType)!
+        println("type: \(type)")
+        
         var output = runFastCoder(input)
         
         XCTAssertTrue(input == output , "object not equal")
         XCTAssertTrue(input.self == output.self, "Type not similar")
-
     }
     
-
+    // encode as "q" not as "L"
+    func testUInt32() {
+        var input = NSNumber(unsignedInt: UInt32.max)
+        
+        let type  = String.fromCString(input.objCType)!
+        println("type: \(type)")
+        
+        var output = runFastCoder(input)
+        
+        XCTAssertTrue(input == output , "object not equal")
+        XCTAssertTrue(input.self == output.self, "Type not similar")
+    }
+    
+    
+    // encode as "i" not as "S"
+    func testUInt16() {
+        var input = NSNumber(unsignedShort: UInt16.max)
+        
+        let type  = String.fromCString(input.objCType)!
+        println("type: \(type)")
+        
+        var output = runFastCoder(input) as! NSNumber
+        
+        XCTAssertTrue(input == output , "object not equal")
+        XCTAssertTrue(input.self == output.self, "Type not similar")
+        
+    }
 }
 
