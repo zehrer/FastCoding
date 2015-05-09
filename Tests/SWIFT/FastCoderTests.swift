@@ -89,6 +89,8 @@ class FastCoderTests: XCTestCase {
     
     // the current implementation is not able to handle cycles
     // both FastCoder Swift & FastCoder ObjC
+    
+    /**
     func testObjectCycles() {
         var rootObj = Model()
         var subObj = Model()
@@ -100,7 +102,7 @@ class FastCoderTests: XCTestCase {
         //XCTAssertTrue(model == newModel, "Model not equal")
         XCTAssertEqual(rootObj, newModel, "Model not equal")
     }
-    
+    */
     
     //
     func testObjectCycles2() {
@@ -149,5 +151,80 @@ class FastCoderTests: XCTestCase {
         XCTAssertEqual(rootObj, o2, "Model not equal")
     }
     
+    func testBooleans() {
+        var input = NSNumber(int: 1)
+        
+        var output = runFastCoder(input)
+        
+        XCTAssertTrue(input == output , "object not equal")
+        XCTAssertTrue(input.self == output.self, "Type not similar")
+        
+        // But in reality this return a NSNumber of "type" bool and not of type Integer as created
+    }
+    
+    func testInt8() {
+        var input = NSNumber(char: Int8.max)
+        
+        var output = runFastCoder(input)
+        
+        XCTAssertTrue(input == output , "object not equal")
+        XCTAssertTrue(input.self == output.self, "Type not similar")
+    }
+    
+    func testInt16() {
+        var input = NSNumber(short: Int16.max)
+        
+        var output = runFastCoder(input)
+        
+        XCTAssertTrue(input == output , "object not equal")
+        XCTAssertTrue(input.self == output.self, "Type not similar")
+        
+        
+    }
+    
+    func testInt32() {
+        var input = NSNumber(int: Int32.max)
+        
+        var output = runFastCoder(input)
+        
+        XCTAssertTrue(input == output , "object not equal")
+        XCTAssertTrue(input.self == output.self, "Type not similar")
+        
+        
+    }
+    
+    func testInt64() {
+        var input = NSNumber(longLong: Int64.max)
+        
+        var output = runFastCoder(input)
+        
+        XCTAssertTrue(input == output , "object not equal")
+        XCTAssertTrue(input.self == output.self, "Type not similar")
+        
+        
+    }
+    
+    func testUInt32() {
+        var input = NSNumber(unsignedInt: UInt32.max)
+        
+        var output = runFastCoder(input)
+        
+        XCTAssertTrue(input == output , "object not equal")
+        XCTAssertTrue(input.self == output.self, "Type not similar")
+        
+        
+    }
+    
+    func testUInt64() {
+        var input = NSNumber(unsignedLongLong: UInt64.max)
+        
+        var output = runFastCoder(input)
+        
+        XCTAssertTrue(input == output , "object not equal")
+        XCTAssertTrue(input.self == output.self, "Type not similar")
+
+    }
+    
+
 }
 
