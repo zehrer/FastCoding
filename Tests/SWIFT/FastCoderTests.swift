@@ -239,6 +239,14 @@ class FastCoderTests: XCTestCase {
         
     }
     
+    func testDate() {
+        let date = NSDate(timeIntervalSinceReferenceDate: 118800)
+        
+        var output = runFastCoder(date) as! NSDate
+        
+        XCTAssertTrue(date == output, "Data is equal")
+    }
+    
     func testNSData() {
         var num1 = NSNumber(unsignedLongLong: UInt64.max)
         let data = "TEST".dataUsingEncoding(NSUTF8StringEncoding)
@@ -257,5 +265,7 @@ class FastCoderTests: XCTestCase {
         XCTAssertTrue(o1 == data, "Data is equal")
         
     }
+    
+
 }
 

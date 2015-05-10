@@ -1,7 +1,7 @@
 //
 //  FastCoding.swift
 //
-//  Version 0.8
+//  Version 0.81
 //
 //  Created by Stephan Zehrer 04/21/2015
 //  Copyright (c) 2015 Stephan Zehrer
@@ -19,6 +19,7 @@
 //  - NSNumber (inc. UInt64 which seems not covered in the ObjC version)
 //  - NSArray (decode always to NSMutableArray)
 //  - support for NSData & NSMutableData
+//  - NSDate
 //
 //  This port do NOT support at the moment:
 //  - The FastCoding "protocol"
@@ -628,18 +629,24 @@ static id FCReadInt8(__unsafe_unretained FCNSDecoder *decoder)
         return data
     }
     
-    /*
-
-static id FCReadData(__unsafe_unretained FCNSDecoder *decoder)
+    static func FCReadDate(decoder : FCDecoder) -> NSDate {
+        var value : NSTimeInterval = 0
+        FCReadValue(&value, decoder: decoder)
+        
+        let date = NSDate(timeIntervalSince1970: value)
+        decoder.objectCache.append(date)
+        
+        return date
+    }
+    
+/**
+static id FCReadDate(__unsafe_unretained FCNSDecoder *decoder)
 {
-    FC_ALIGN_INPUT(uint32_t, *decoder->_offset);
-    uint32_t length = FCReadRawUInt32(decoder);
-    NSUInteger paddedLength = length + (4 - ((length % 4) ?: 4));
-    FC_ASSERT_FITS(paddedLength, *decoder->_offset, decoder->_total);
-    __autoreleasing NSData *data = [NSData dataWithBytes:(decoder->_input + *decoder->_offset) length:length];
-    *decoder->_offset += paddedLength;
-    FCCacheParsedObject(data, decoder->_objectCache);
-    return data;
+    FC_ALIGN_INPUT(NSTimeInterval, *decoder->_offset);
+    FC_READ_VALUE(NSTimeInterval, *decoder->_offset, decoder->_input, decoder->_total);
+    __autoreleasing NSDate *date = [NSDate dateWithTimeIntervalSince1970:value];
+    FCCacheParsedObject(date, decoder->_objectCache);
+    return date;
 }
 */
     
@@ -702,6 +709,8 @@ static id FCReadData(__unsafe_unretained FCNSDecoder *decoder)
             return FCReadData(decoder)
         case .FCTypeMutableData:
             return FCReadMutableData(decoder)
+        case .FCTypeDate:
+            return FCReadDate(decoder)
         case .FCTypeNSCodedObject:
             return FCReadNSCodedObject(decoder)
         case .FCTypeOne:
@@ -1098,9 +1107,26 @@ extension NSDecimalNumber {
 extension NSDate {
     
     @objc override public func FC_encodeWithCoder(aCoder: FCCoder) {
-        assertionFailure("Not supported object type")
+        
+        if FastCoder.FCWriteObjectAlias(self, coder: aCoder) { return }
+        aCoder.FCCacheWrittenObject(self)
+        FastCoder.FCWriteType(.FCTypeDate, output:aCoder.output)
+        
+        var value = self.timeIntervalSince1970
+        aCoder.output.appendBytes(&value, length:sizeof(NSTimeInterval))
     }
 }
+
+/**
+- (void)FC_encodeWithCoder:(__unsafe_unretained FCNSCoder *)coder
+{
+
+
+    NSTimeInterval value = [self timeIntervalSince1970];
+    FC_ALIGN_OUTPUT(NSTimeInterval, coder->_output);
+    [coder->_output appendBytes:&value length:sizeof(value)];
+}
+*/
 
 extension NSData {
     
