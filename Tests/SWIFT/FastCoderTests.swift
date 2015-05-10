@@ -238,5 +238,24 @@ class FastCoderTests: XCTestCase {
         XCTAssertTrue(input.self == output.self, "Type not similar")
         
     }
+    
+    func testNSData() {
+        var num1 = NSNumber(unsignedLongLong: UInt64.max)
+        let data = "TEST".dataUsingEncoding(NSUTF8StringEncoding)
+        var num2 = NSNumber(unsignedLongLong: UInt64.max)
+        
+        var array = NSMutableArray()
+        array.addObject(num1)
+        array.addObject(data!)
+        array.addObject(num2)
+        
+        var output = runFastCoder(array) as! NSArray
+        
+        var o1 = output[1] as! NSData
+
+        
+        XCTAssertTrue(o1 == data, "Data is equal")
+        
+    }
 }
 
