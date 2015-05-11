@@ -1,7 +1,7 @@
 //
 //  FastCoding.swift
 //
-//  Version 0.82
+//  Version 0.83
 //
 //  Created by Stephan Zehrer 04/21/2015
 //  Copyright (c) 2015 Stephan Zehrer
@@ -1357,10 +1357,12 @@ public class FCCoder : NSCoder {
     
     override public func encodeInteger(intv: Int, forKey key: String) {
         
+        // TODO: implement the cool version NSNumber version to optimize the space
+        
         if (intv > Int(Int32.max)) || (intv < Int(Int32.min)) {
-            encodeInt32(Int32(intv), forKey: key)
-        } else {
             encodeInt64(Int64(intv), forKey: key)
+        } else {
+            encodeInt32(Int32(intv), forKey: key)
         }
         
         //FastCoder.FCWriteObject(NSNumber(long: intv), coder: self)
