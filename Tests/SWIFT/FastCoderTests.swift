@@ -22,6 +22,15 @@ class Model : NSObject, NSCoding, Equatable{
     var nextObj2 : Model? = nil
     weak var prevObj : Model? = nil
     
+    var  int8 : Int8 = Int8.max
+    var  int16 : Int16 = Int16.max
+    var  int32 : Int32 = Int32.max
+    var  int64 : Int64 = Int64.max
+    
+    var  intv : Int = Int.max
+    
+    var bool : Bool = true
+    
     required override init() {
         
     }
@@ -31,6 +40,11 @@ class Model : NSObject, NSCoding, Equatable{
         nextObj1 = aDecoder.decodeObjectForKey("2") as? Model
         nextObj2 = aDecoder.decodeObjectForKey("3") as? Model
         prevObj = aDecoder.decodeObjectForKey("4") as? Model
+        
+        bool = aDecoder.decodeBoolForKey("b")
+        int32 = aDecoder.decodeInt32ForKey("i32")
+        int64 = aDecoder.decodeInt64ForKey("i64")
+        intv = aDecoder.decodeIntegerForKey("int")
     }
     
     func encodeWithCoder(aCoder: NSCoder) {
@@ -38,6 +52,11 @@ class Model : NSObject, NSCoding, Equatable{
         aCoder.encodeObject(nextObj1, forKey: "2")
         aCoder.encodeObject(nextObj2, forKey: "3")
         aCoder.encodeObject(prevObj, forKey: "4")
+        
+        aCoder.encodeBool(bool, forKey:"b")
+        aCoder.encodeInt32(int32, forKey: "i32")
+        aCoder.encodeInt64(int64, forKey: "i64")
+        aCoder.encodeInteger(intv, forKey: "int")
     }
 }
 
