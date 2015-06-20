@@ -1,6 +1,10 @@
 [![Build Status](https://travis-ci.org/nicklockwood/FastCoding.svg)](https://travis-ci.org/nicklockwood/FastCoding)
 
 
+Swift
+-------------- 
+ The main target of this fork is to provide a native Swift version for FastCoder. The latest version is already tested with Swift 2.0. Please read the top of FastCoder.swift because it does not support all features of the obj-c version. 
+ 
 Purpose
 --------------
 
