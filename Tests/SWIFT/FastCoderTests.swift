@@ -13,7 +13,7 @@ import XCTest
 
 
 
-class Model : NSObject, NSCoding, Equatable{
+class Model : NSObject, NSCoding {
     var text = ""
     //var array1 = NSArray()
     //var array2 = NSArray()
@@ -77,10 +77,10 @@ func ==(lhs: Model  , rhs: Model) -> Bool {
 class FastCoderTests: XCTestCase {
     
     func runFastCoder(obj: NSObject) -> NSObject {
-        var data = FastCoder.dataWithRootObject(obj)
+        let data = FastCoder.dataWithRootObject(obj)
         
         if data != nil {
-            var obj = FastCoder.objectWithData(data!)
+            let obj = FastCoder.objectWithData(data!)
             
             if obj != nil {
                 return obj!
@@ -95,11 +95,11 @@ class FastCoderTests: XCTestCase {
     }
     
     func testChangingModel() {
-        var rootObj = Model()
+        let rootObj = Model()
         rootObj.text = "foo"
         // array not supported
         
-        var newModel = runFastCoder(rootObj) as! Model
+        let newModel = runFastCoder(rootObj) as! Model
         
         //XCTAssertTrue(model == newModel, "Model not equal")
         XCTAssertEqual(rootObj, newModel, "Model not equal")
@@ -125,44 +125,44 @@ class FastCoderTests: XCTestCase {
     
     //
     func testObjectCycles2() {
-        var rootObj = Model()
-        var subObj = Model()
+        let rootObj = Model()
+        let subObj = Model()
         rootObj.nextObj1 = subObj
         subObj.prevObj = rootObj
         
-        var data = NSKeyedArchiver.archivedDataWithRootObject(rootObj)
-        var newModel = NSKeyedUnarchiver.unarchiveObjectWithData(data) as? Model
+        let data = NSKeyedArchiver.archivedDataWithRootObject(rootObj)
+        let newModel = NSKeyedUnarchiver.unarchiveObjectWithData(data) as? Model
         
         XCTAssertTrue(rootObj == newModel, "Model not equal")
         //XCTAssertEqual(rootObj, newModel!, "Model not equal")
     }
     
     func testAliasing() {
-        var rootObj = Model()
-        var obj1 = Model()
+        let rootObj = Model()
+        let obj1 = Model()
         rootObj.nextObj1 = obj1
-        var obj2 = Model()
+        let obj2 = Model()
         rootObj.nextObj2 = obj2
-        var obj3 = Model()
+        let obj3 = Model()
         obj1.nextObj1 = obj3
         obj2.nextObj1 = obj3
         
-        var newModel = runFastCoder(rootObj) as! Model
+        let newModel = runFastCoder(rootObj) as! Model
         XCTAssertEqual(rootObj, newModel, "Model not equal")
         
     }
     
     func testAliasingWithSubstitution() {
-        var rootObj = Model()
-        var array = NSMutableArray()
+        let rootObj = Model()
+        let array = NSMutableArray()
         array.addObject(rootObj)
         array.addObject(rootObj)
         
         //var array = [rootObj, rootObj]
         
-        var newModel = runFastCoder(array) as! NSArray
-        var o1 = newModel[0] as! Model
-        var o2 = newModel[1] as! Model
+        let newModel = runFastCoder(array) as! NSArray
+        let o1 = newModel[0] as! Model
+        let o2 = newModel[1] as! Model
         
         //XCTAssertEqual(o1, o2, "Not the same obj")
         XCTAssertTrue(o1 === o2, "Model not identical")
@@ -171,9 +171,9 @@ class FastCoderTests: XCTestCase {
     }
     
     func testBooleans() {
-        var input = NSNumber(int: 1)
+        let input = NSNumber(int: 1)
         
-        var output = runFastCoder(input)
+        let output = runFastCoder(input)
         
         XCTAssertTrue(input == output , "object not equal")
         XCTAssertTrue(input.self == output.self, "Type not similar")
@@ -182,36 +182,36 @@ class FastCoderTests: XCTestCase {
     }
     
     func testInt8() {
-        var input = NSNumber(char: Int8.max)
+        let input = NSNumber(char: Int8.max)
         
-        var output = runFastCoder(input)
+        let output = runFastCoder(input)
         
         XCTAssertTrue(input == output , "object not equal")
         XCTAssertTrue(input.self == output.self, "Type not similar")
     }
     
     func testInt16() {
-        var input = NSNumber(short: Int16.max)
+        let input = NSNumber(short: Int16.max)
         
-        var output = runFastCoder(input)
+        let output = runFastCoder(input)
         
         XCTAssertTrue(input == output , "object not equal")
         XCTAssertTrue(input.self == output.self, "Type not similar")
     }
     
     func testInt32() {
-        var input = NSNumber(int: Int32.max)
+        let input = NSNumber(int: Int32.max)
         
-        var output = runFastCoder(input)
+        let output = runFastCoder(input)
         
         XCTAssertTrue(input == output , "object not equal")
         XCTAssertTrue(input.self == output.self, "Type not similar")
     }
     
     func testInt64() {
-        var input = NSNumber(longLong: Int64.max)
+        let input = NSNumber(longLong: Int64.max)
         
-        var output = runFastCoder(input)
+        let output = runFastCoder(input)
         
         XCTAssertTrue(input == output , "object not equal")
         XCTAssertTrue(input.self == output.self, "Type not similar")
@@ -219,12 +219,12 @@ class FastCoderTests: XCTestCase {
 
     // encode as "Q" -> correct
     func testUInt64() {
-        var input = NSNumber(unsignedLongLong: UInt64.max)
+        let input = NSNumber(unsignedLongLong: UInt64.max)
         
         let type  = String.fromCString(input.objCType)!
-        println("type: \(type)")
+        print("type: \(type)")
         
-        var output = runFastCoder(input)
+        let output = runFastCoder(input)
         
         XCTAssertTrue(input == output , "object not equal")
         XCTAssertTrue(input.self == output.self, "Type not similar")
@@ -232,12 +232,12 @@ class FastCoderTests: XCTestCase {
     
     // encode as "q" not as "L"
     func testUInt32() {
-        var input = NSNumber(unsignedInt: UInt32.max)
+        let input = NSNumber(unsignedInt: UInt32.max)
         
         let type  = String.fromCString(input.objCType)!
-        println("type: \(type)")
+        print("type: \(type)")
         
-        var output = runFastCoder(input)
+        let output = runFastCoder(input)
         
         XCTAssertTrue(input == output , "object not equal")
         XCTAssertTrue(input.self == output.self, "Type not similar")
@@ -246,12 +246,12 @@ class FastCoderTests: XCTestCase {
     
     // encode as "i" not as "S"
     func testUInt16() {
-        var input = NSNumber(unsignedShort: UInt16.max)
+        let input = NSNumber(unsignedShort: UInt16.max)
         
         let type  = String.fromCString(input.objCType)!
-        println("type: \(type)")
+        print("type: \(type)")
         
-        var output = runFastCoder(input) as! NSNumber
+        let output = runFastCoder(input) as! NSNumber
         
         XCTAssertTrue(input == output , "object not equal")
         XCTAssertTrue(input.self == output.self, "Type not similar")
@@ -261,24 +261,24 @@ class FastCoderTests: XCTestCase {
     func testDate() {
         let date = NSDate(timeIntervalSinceReferenceDate: 118800)
         
-        var output = runFastCoder(date) as! NSDate
+        let output = runFastCoder(date) as! NSDate
         
         XCTAssertTrue(date == output, "Data is equal")
     }
     
     func testNSData() {
-        var num1 = NSNumber(unsignedLongLong: UInt64.max)
+        let num1 = NSNumber(unsignedLongLong: UInt64.max)
         let data = "TEST".dataUsingEncoding(NSUTF8StringEncoding)
-        var num2 = NSNumber(unsignedLongLong: UInt64.max)
+        let num2 = NSNumber(unsignedLongLong: UInt64.max)
         
-        var array = NSMutableArray()
+        let array = NSMutableArray()
         array.addObject(num1)
         array.addObject(data!)
         array.addObject(num2)
         
-        var output = runFastCoder(array) as! NSArray
+        let output = runFastCoder(array) as! NSArray
         
-        var o1 = output[1] as! NSData
+        let o1 = output[1] as! NSData
 
         
         XCTAssertTrue(o1 == data, "Data is equal")
