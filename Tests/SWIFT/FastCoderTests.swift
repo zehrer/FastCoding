@@ -101,8 +101,8 @@ class FastCoderTests: XCTestCase {
         
         let newModel = runFastCoder(rootObj) as! Model
         
-        //XCTAssertTrue(model == newModel, "Model not equal")
-        XCTAssertEqual(rootObj, newModel, "Model not equal")
+        XCTAssertTrue(rootObj == newModel, "Model not equal")
+        //XCTAssertEqual(rootObj, newModel, "Model not equal")
 
     }
     
@@ -133,6 +133,10 @@ class FastCoderTests: XCTestCase {
         let data = NSKeyedArchiver.archivedDataWithRootObject(rootObj)
         let newModel = NSKeyedUnarchiver.unarchiveObjectWithData(data) as? Model
         
+        XCTAssertNotNil(newModel)
+        
+        // TODO: model not equal?
+        
         XCTAssertTrue(rootObj == newModel, "Model not equal")
         //XCTAssertEqual(rootObj, newModel!, "Model not equal")
     }
@@ -148,7 +152,8 @@ class FastCoderTests: XCTestCase {
         obj2.nextObj1 = obj3
         
         let newModel = runFastCoder(rootObj) as! Model
-        XCTAssertEqual(rootObj, newModel, "Model not equal")
+        XCTAssertTrue(rootObj == newModel, "Model not equal")
+        //XCTAssertEqual(rootObj, newModel, "Model not equal")
         
     }
     
@@ -166,8 +171,11 @@ class FastCoderTests: XCTestCase {
         
         //XCTAssertEqual(o1, o2, "Not the same obj")
         XCTAssertTrue(o1 === o2, "Model not identical")
-        XCTAssertEqual(rootObj, o1, "Model not equal")
-        XCTAssertEqual(rootObj, o2, "Model not equal")
+        
+        XCTAssertTrue(rootObj == o1, "Model not equal")
+        XCTAssertTrue(rootObj == o2, "Model not equal")
+        //XCTAssertEqual(rootObj, o1, "Model not equal")
+        //XCTAssertEqual(rootObj, o2, "Model not equal")
     }
     
     func testBooleans() {
