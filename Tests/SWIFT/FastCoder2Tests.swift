@@ -6,30 +6,61 @@
 //
 //
 
+import Cocoa
+import FastCoding
 import XCTest
 
 class FastCoder2Tests: XCTestCase {
+    
+    func runFastCoder2<T: Encode>(element: T) -> T? {
+        let data = FastCoder2.encodeRootElement(element)
+        
+        if data != nil {
+            let obj : T? = FastCoder2.decodeRootElement(data!)
+            
+            if obj != nil {
+                return obj!
+            } else {
+                XCTFail("Result is nil")
+            }
+        }
+        
+        XCTFail("Data is nil")
+        //assertionFailure("Data is nil")
+        return nil
+    }
 
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    func testBasicValueBool() {
+        let input = true
+        
+        let output = runFastCoder2(input)
+        
+        XCTAssertTrue(input == output , "value not equal")
+        XCTAssertTrue(input.self == output.self, "Type not similar")
+        
+        // But in reality this return a NSNumber of "type" bool and not of type Integer as created
     }
     
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
+    func testBasicValueInt() {
+        let input = 42
+        
+        let output = runFastCoder2(input)
+        
+        XCTAssertTrue(input == output , "value not equal")
+        XCTAssertTrue(input.self == output.self, "Type not similar")
+        
+        // But in reality this return a NSNumber of "type" bool and not of type Integer as created
     }
-
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock() {
-            // Put the code you want to measure the time of here.
-        }
+    
+    func testBasicValueUInt8() {
+        let input : UInt8 = 42
+        
+        let output = runFastCoder2(input)
+        
+        XCTAssertTrue(input == output , "value not equal")
+        XCTAssertTrue(input.self == output.self, "Type not similar")
+        
+        // But in reality this return a NSNumber of "type" bool and not of type Integer as created
     }
 
 }
