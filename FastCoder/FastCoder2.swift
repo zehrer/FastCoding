@@ -38,12 +38,11 @@
 
 import Foundation
 
-public protocol FCoding : class{
+public protocol FCoding {
     
     //Only within the Initialization of an object it is possible 
     // to set the value of a stored property if it is not optional
     init(coder aDecoder: FCoder)
-    
     
     func encodeWithCoder(aCoder: FCoder)
 }
@@ -51,7 +50,55 @@ public protocol FCoding : class{
 public protocol FCoder {
     
     func encodeObject(objv: AnyObject?, forKey key: String)
+    func encodeObject(data: NSData, forKey key: String)
     
+    func encodeValue(boolv: Bool?, forKey key: String)
+    
+    func encodeValue(intv: Int8?, forKey key: String)
+    func encodeValue(intv: Int16?, forKey key: String)
+    func encodeValue(intv: Int32?, forKey key: String)
+    func encodeValue(intv: Int64?, forKey key: String)
+    func encodeValue(intv: Int?, forKey key:String)
+    
+    func encodeValue(intv: UInt8?, forKey key: String)
+    func encodeValue(intv: UInt16?, forKey key: String)
+    func encodeValue(intv: UInt32?, forKey key: String)
+    func encodeValue(intv: UInt64?, forKey key: String)
+    func encodeValue(intv: UInt?, forKey key:String)
+    
+    func encodeValue(realv: Float?, forKey key: String)
+    func encodeValue(realv: Double?, forKey key: String)
+    
+    func encodeValue(strv: String?, forKey key: String)
+    
+
+    
+    func decodeObjectForKey(key: String) -> AnyObject?
+    func decodeDataForKey(key: String) -> NSData
+    
+    func decodeValueForKey(key: String) -> Bool?
+    
+    func decodeValueForKey(key: String) -> Int8?
+    func decodeValueForKey(key: String) -> Int16?
+    func decodeValueForKey(key: String) -> Int32?
+    func decodeValueForKey(key: String) -> Int64?
+    func decodeValueForKey(key: String) -> Int?
+    
+    func decodeValueForKey(key: String) -> UInt8?
+    func decodeValueForKey(key: String) -> UInt16?
+    func decodeValueForKey(key: String) -> UInt32?
+    func decodeValueForKey(key: String) -> UInt64?
+    func decodeValueForKey(key: String) -> UInt?
+    
+    func decodeValueForKey(key: String) -> Float?
+    func decodeValueForKey(key: String) -> Double?
+    
+    
+    func decodeValueForKey(key: String) -> String?
+    
+    func containsValueForKey(key: String) -> Bool
+    
+    /**
     func encodeBool(boolv: Bool, forKey key: String)
     
     func encodeInt8(intv: Int8?, forKey key: String)
@@ -67,11 +114,9 @@ public protocol FCoder {
     func encodeDouble(realv: Double?, forKey key: String)
     
     func encodeString(strv: String?, forKey key: String)
-    
-    func encodeData(data: NSData, forKey key: String)
-    
-    func decodeObjectForKey(key: String) -> AnyObject?
-    
+    */
+
+    /**
     func decodeBoolForKey(key: String) -> Bool?
     
     func decodeInt8ForKey(key: String) -> Int8?
@@ -86,13 +131,11 @@ public protocol FCoder {
     
     func decodeFloatForKey(key: String) -> Float?
     func decodeDoubleForKey(key: String) -> Double?
-    
-    func decodeStringForKey(key: String) -> String?
-    
-    func decodeDataForKey(key: String) -> NSData
-    
-    func containsValueForKey(key: String) -> Bool
 
+
+    func decodeStringForKey(key: String) -> String?
+    */
+    
 }
 
 public enum FC2Type : UInt8 {
@@ -141,35 +184,58 @@ public enum FC2Type : UInt8 {
     //case FCType3DTransform
 }
 
-public class FastCoder2 {
+public class FastCoder2 { //<T : FCoding>
 
     // write data
-    public static func dataWithRootObject(object : NSObject) -> NSData? {
+    /**
+    public static func dataWithRootObject(object : AnyObject) -> NSData? {
         
-        var output : NSMutableData! = NSMutableData(length: 0) // TODO: define default size
+        let output : NSMutableData! = NSMutableData(length: 0) // TODO: define default size
         
         //create coder
-        var coder = FC2Encoder(data: output)
+        var coder = FC2Encoder(output)
         
         //write object
-        //coder.writeObject(object)
+        coder.writeObject(object)
         
         return output
         
     }
     
     // read data
-    public static func objectWithData(data: NSData) -> NSObject? {
+    public static func objectWithData(data: NSData) -> AnyObject? {
+    
+    var decoder = FC2Decoder(data)
+    
+    return nil // decoder.readObject(data)
+    }
+    */
+    
+    // write data
+    public static func encodeRootElement(element : Any) -> NSData? {
         
-        var decoder = FC2Decoder(data)
+        let output = NSMutableData()
         
-        return nil // decoder.readObject(data)
+        let coder = FC2Encoder(output)
+        
+        coder.encode(element)
+
+        return output
+    }
+    
+    public static func decodeRootElement<T :FCoding>(data : NSData) -> T? {
+        
+        let coder = FC2Decoder(data)
+        
+        return coder.read()
     }
 
+
+    
 }
 
 
-class FC2Encoder {
+class FC2Encoder : FC2Coder {
     
     // Key is a object, values are the related index
     var objectCache = Dictionary<NSObject,Index>()
@@ -177,66 +243,47 @@ class FC2Encoder {
     // Key is a string, value is the related index
     var stringCache = Dictionary<String,Index>()
     
-    var encodeOutput : NSMutableData?
+    var encodeOutput : NSMutableData
     
-    init(data: NSMutableData) {
+    init(_ data: NSMutableData) {
         encodeOutput = data
+    }
+    
+    // MARK:
+    
+    func encode(element : Any) {
+        switch element {
+        case let obj as NSCoder:
+            print("NSCoder supprot")
+        case let coding as FCoding:
+            // TODO
+            coding.encodeWithCoder(self)
+        case let boolv as Bool:
+            writeBool(boolv)
+        case let intv as Int:
+            writeInt(intv)
+        default:
+            assertionFailure("Unsupported Root Element")
+        }
+    }
+    
+    // MARK: WriteMethodes
+    
+    func writeType(type : FC2Type) {
+        
+    }
+    
+    func writeBool(boolv : Bool) {
+        
+    }
+    
+    func writeInt(intv : Int) {
+        
     }
 
     // MARK: Protocol
     
-    func encodeObject(objv: AnyObject?, forKey key: String) {
         
-    }
-    
-    func encodeBool(boolv: Bool, forKey key: String) {
-        
-    }
-    
-    func encodeInt8(intv: Int8?, forKey key: String) {
-        
-    }
-    
-    func encodeInt16(intv: Int16?, forKey key: String) {
-        
-    }
-    
-    func encodeInt32(intv: Int32?, forKey key: String) {
-        
-    }
-    
-    func encodeInt64(intv: Int64?, forKey key: String) {
-        
-    }
-    
-    func encodeUInt8(intv: UInt8?, forKey key: String) {
-        
-    }
-    
-    func encodeUInt16(intv: UInt16?, forKey key: String) {
-        
-    }
-    
-    func encodeUInt32(intv: UInt32?, forKey key: String) {
-        
-    }
-    
-    func encodeUInt64(intv: UInt64?, forKey key: String) {
-        
-    }
-    
-    func encodeFloat(realv: Float?, forKey key: String) {
-        
-    }
-    
-    func encodeDouble(realv: Double?, forKey key: String) {
-        
-    }
-    
-    func encodeString(strv: String?, forKey key: String) {
-        
-    }
-    
     func encodeData(data: NSData, forKey key: String) {
         
     }
@@ -246,7 +293,7 @@ class FC2Decoder : FC2Coder {
     
     // Key is a object, values are the related index
     //var objectCache = Dictionary<NSObject,Index>()
-    var objectCache = Array<AnyObject>()
+    var objectCache = Array<Any>()
     
     // Key is a string, value is the related index
     
@@ -275,11 +322,16 @@ class FC2Decoder : FC2Coder {
     
     // return string lengh at current location (incl. zero termination)
     func stringDataLength() -> UInt {
-        var utf8 = UnsafePointer<Int8>(data.bytes + location)
+        let utf8 = UnsafePointer<Int8>(data.bytes + location)
         return strlen(utf8) + 1 // +1 for zero termination
     }
     
     // MARK: READ
+    
+    func read<T>() -> T? {
+        
+        return nil
+    }
     
     func readValue<T>(inout value:T) {
         let size = sizeof(T)
@@ -292,7 +344,7 @@ class FC2Decoder : FC2Coder {
         var value : UInt8 = 0
         readValue(&value)
         
-        var type = FC2Type(rawValue: value)
+        let type = FC2Type(rawValue: value)
         
         if type != nil  {
             return type!
@@ -338,6 +390,7 @@ class FC2Decoder : FC2Coder {
         return ""
     }
     
+    /**
     func readAlias8() -> AnyObject {
         let index = readUInt8()
         
@@ -355,7 +408,8 @@ class FC2Decoder : FC2Coder {
         
         return objectCache[Int(index)]
     }
-    
+    */
+
     func readStringAlias8() -> String {
         let index = readUInt8()
         
@@ -375,7 +429,7 @@ class FC2Decoder : FC2Coder {
     }
     
     func readString() -> String {
-        var string = readRawString()
+        let string = readRawString()
         
         if string != nil {
             stringCache.append(string!)
@@ -386,10 +440,10 @@ class FC2Decoder : FC2Coder {
         return ""
     }
     
-    func readObject() -> AnyObject? {
+    func readObject<O : FCoding>() -> O {
         
-        var className = readString()
-        var oldProperties = properties
+        let className = readString()
+        let oldProperties = properties
         
         properties = Dictionary()
         
@@ -401,14 +455,14 @@ class FC2Decoder : FC2Coder {
                 break;
             } // list termination
             
-            var instance = readInstance(type)
-            var key = readString()
+            let instance = readInstance(type)
+            let key = readString()
             properties[key] = instance
         }
         
-        let objClass = NSClassFromString(className) as! FCoding.Type
-        // TODO: this line lead to an segmentation fault in the compiler
-        var object: AnyObject = objClass(coder: self)
+        let objClass = NSClassFromString(className) as? O.Type
+
+        let object = objClass!.init(coder: self)
         
         objectCache.append(object)
         
@@ -461,7 +515,7 @@ class FC2Decoder : FC2Coder {
     }
     
     func readInstance() -> Any {
-        var type = readType()
+        let type = readType()
         
         return readInstance(type)
         
@@ -472,12 +526,12 @@ class FC2Decoder : FC2Coder {
         switch type {
         case .FCTypeNil:
             return nil
-        case .FCTypeObjectAlias8:
-            return readAlias8()
-        case .FCTypeObjectAlias16:
-            return readAlias16()
-        case .FCTypeObjectAlias32:
-            return readAlias32()
+      //  case .FCTypeObjectAlias8:
+      //      return readAlias8()
+      //  case .FCTypeObjectAlias16:
+      //      return readAlias16()
+      //  case .FCTypeObjectAlias32:
+      //      return readAlias32()
         case .FCTypeStringAlias8:
             return readStringAlias8()
         case .FCTypeStringAlias16:
@@ -508,8 +562,8 @@ class FC2Decoder : FC2Coder {
             return readFloat32()
         case .FCTypeFloat64:
             return readFloat64()  // Double
-        case .FCTypeObject:
-            return readObject()
+        //case .FCTypeObject:
+        //    return readObject()
         //case FCTypeDate
         //case FCTypeData
         //case FCTypeMutableData
@@ -536,54 +590,6 @@ class FC2Decoder : FC2Coder {
         return nil
     }
     
-    override func decodeBoolForKey(key: String) -> Bool? {
-        return nil
-    }
-    
-    override func decodeInt8ForKey(key: String) -> Int8? {
-        return nil
-    }
-    
-    override func decodeInt16ForKey(key: String) -> Int16? {
-        return nil
-    }
-    
-    override func decodeInt32ForKey(key: String) -> Int32? {
-        return nil
-    }
-    
-    override func decodeInt64ForKey(key: String) -> Int64? {
-        return nil
-    }
-    
-    override func decodeUInt8ForKey(key: String) -> UInt8? {
-        return nil
-    }
-    
-    override func decodeUInt16ForKey(key: String) -> UInt16? {
-        return nil
-    }
-    
-    override func decodeUInt32ForKey(key: String) -> UInt32? {
-        return nil
-    }
-    
-    override func decodeUInt64ForKey(key: String) -> UInt64? {
-        return nil
-    }
-    
-    override func decodeFloatForKey(key: String) -> Float? {
-        return nil
-    }
-    
-    override func decodeDoubleForKey(key: String) -> Double? {
-        return nil
-    }
-    
-    override func decodeStringForKey(key: String) -> String? {
-        return nil
-    }
-    
     override func decodeDataForKey(key: String) -> NSData {
         return NSMutableData()
     }
@@ -599,6 +605,73 @@ class FC2Decoder : FC2Coder {
 class FC2Coder : FCoder {
     // MARK: Protocol
     
+    func encodeObject(objv: AnyObject?, forKey key: String) {
+        
+    }
+    
+    func encodeObject(data: NSData, forKey key: String) {
+        
+    }
+
+    func encodeValue(boolv: Bool?, forKey key: String) {
+        
+    }
+
+    func encodeValue(intv: Int8?, forKey key: String) {
+        
+    }
+
+    func encodeValue(intv: Int16?, forKey key: String) {
+        
+    }
+
+    func encodeValue(intv: Int32?, forKey key: String) {
+        
+    }
+
+    func encodeValue(intv: Int64?, forKey key: String) {
+        
+    }
+    
+    func encodeValue(intv: Int?, forKey key: String) {
+        
+    }
+
+    func encodeValue(intv: UInt8?, forKey key: String) {
+        
+    }
+
+    func encodeValue(intv: UInt16?, forKey key: String) {
+        
+    }
+
+    func encodeValue(intv: UInt32?, forKey key: String) {
+        
+    }
+
+    func encodeValue(intv: UInt64?, forKey key: String) {
+        
+    }
+    
+    func encodeValue(intv: UInt?, forKey key: String) {
+        
+    }
+    
+    func encodeValue(realv: Float?, forKey key: String) {
+        
+    }
+
+    func encodeValue(realv: Double?, forKey key: String) {
+        
+    }
+    
+    func encodeValue(strv: String?, forKey key: String) {
+        
+    }
+
+    
+    
+    /**
     func encodeObject(objv: AnyObject?, forKey key: String) {
         
     }
@@ -654,8 +727,77 @@ class FC2Coder : FCoder {
     func encodeData(data: NSData, forKey key: String) {
         
     }
+    */
     
     // MARK: -------------
+    
+    
+    func decodeObjectForKey(key: String) -> AnyObject? {
+        return nil
+    }
+    
+    func decodeDataForKey(key: String) -> NSData {
+        return NSMutableData()
+    }
+    
+    func decodeValueForKey(key: String) -> Bool? {
+        return nil
+    }
+
+    func decodeValueForKey(key: String) -> Int8? {
+        return nil
+    }
+
+    
+    func decodeValueForKey(key: String) -> Int16? {
+        return nil
+    }
+
+    func decodeValueForKey(key: String) -> Int32? {
+        return nil
+    }
+
+    func decodeValueForKey(key: String) -> Int64? {
+        return nil
+    }
+
+    func decodeValueForKey(key: String) -> Int? {
+        return nil
+    }
+    
+    func decodeValueForKey(key: String) -> UInt8? {
+        return nil
+    }
+
+    func decodeValueForKey(key: String) -> UInt16? {
+        return nil
+    }
+
+    func decodeValueForKey(key: String) -> UInt32? {
+        return nil
+    }
+
+    func decodeValueForKey(key: String) -> UInt64? {
+        return nil
+    }
+    
+    func decodeValueForKey(key: String) -> UInt? {
+        return nil
+    }
+
+    func decodeValueForKey(key: String) -> Float? {
+        return nil
+    }
+
+    func decodeValueForKey(key: String) -> Double? {
+        return nil
+    }
+
+    func decodeValueForKey(key: String) -> String? {
+        return nil
+    }
+
+    /**
     
     func decodeObjectForKey(key: String) -> AnyObject? {
         return nil
@@ -713,6 +855,8 @@ class FC2Coder : FCoder {
     func decodeDataForKey(key: String) -> NSData {
         return NSMutableData()
     }
+
+    */
     
     func containsValueForKey(key: String) -> Bool {
         return false
