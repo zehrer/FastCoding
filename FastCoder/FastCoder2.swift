@@ -1,16 +1,22 @@
 //
 //  FastCoder2.swift
 //
-//  Version 0.1
+//  Version 0.2
 //
 //  Created by Stephan Zehrer 05/05/2015
 //  Copyright (c) 2015 Stephan Zehrer
 //
 // This (new) generation of FastCoder is derived from the FastCoder port from ObjC to Swift.
-// The (inita) design goal here is a pure Swift version but with a reduced feature set.
+// The (inital) design goal here is a pure Swift version with a reduced feature set.
 //
 // Here a list of features version shall cover
 //  - No dependencies to NSCoding but reuse the same pattern
+
+// Here the list of supported features:
+//  - Direct encode / decode of the following value types:
+//    Bool, Int, UInt, Int8, UInt8, Flout, Double
+//  - Support to decode integer with the minimum space (this has impact on the types)
+//  - New Coding & Coder protocol with support for UInt
 //
 //  Distributed under the permissive zlib License
 //  Get the latest version from here:
@@ -40,15 +46,31 @@ import Foundation
 
 public protocol Coding {
     
-    //Only within the Initialization of an object it is possible 
+    //Only within the Initialization of an object it is possible
     // to set the value of a stored property if it is not optional
-    init(coder aDecoder: FCoder)
+    init(coder aDecoder: Coder)
     
-    func encodeWithCoder(aCoder: FCoder)
+    func encodeWithCoder(coder : Coder)
 }
 
-public protocol FCoder {
+public protocol Coder {
     
+    /**
+    func encode(intv : Bool)
+    
+    func encode(intv : Int)
+    func encode(intv : UInt)
+    func encode(intv : UInt8)
+    
+    func encode(realv: Float)
+    func encode(realv: Double)
+    
+    func encode(element : Coding)
+    
+    //func encode(element : Any)
+    */
+    
+    // --- encode ---
     func encodeObject(objv: AnyObject?, forKey key: String)
     func encodeObject(data: NSData, forKey key: String)
     
@@ -68,14 +90,20 @@ public protocol FCoder {
     
     func encodeValue(realv: Float?, forKey key: String)
     func encodeValue(realv: Double?, forKey key: String)
-    
+
     func encodeValue(strv: String?, forKey key: String)
     
-
+    // --- decode ---
+    
+    func containsValueForKey(key: String) -> Bool
     
     func decodeObjectForKey(key: String) -> AnyObject?
     func decodeDataForKey(key: String) -> NSData
     
+    func decodeElementForKey<T>(key : String) -> T?
+    func decodeElementForKey(Key : String) -> Any?
+    
+    /**
     func decodeValueForKey(key: String) -> Bool?
     
     func decodeValueForKey(key: String) -> Int8?
@@ -93,76 +121,37 @@ public protocol FCoder {
     func decodeValueForKey(key: String) -> Float?
     func decodeValueForKey(key: String) -> Double?
     
-    
     func decodeValueForKey(key: String) -> String?
-    
-    func containsValueForKey(key: String) -> Bool
-    
-    /**
-    func encodeBool(boolv: Bool, forKey key: String)
-    
-    func encodeInt8(intv: Int8?, forKey key: String)
-    func encodeInt16(intv: Int16?, forKey key: String)
-    func encodeInt32(intv: Int32?, forKey key: String)
-    func encodeInt64(intv: Int64?, forKey key: String)
-    func encodeUInt8(intv: UInt8?, forKey key: String)
-    func encodeUInt16(intv: UInt16?, forKey key: String)
-    func encodeUInt32(intv: UInt32?, forKey key: String)
-    func encodeUInt64(intv: UInt64?, forKey key: String)
-    
-    func encodeFloat(realv: Float?, forKey key: String)
-    func encodeDouble(realv: Double?, forKey key: String)
-    
-    func encodeString(strv: String?, forKey key: String)
     */
-
-    /**
-    func decodeBoolForKey(key: String) -> Bool?
-    
-    func decodeInt8ForKey(key: String) -> Int8?
-    func decodeInt16ForKey(key: String) -> Int16?
-    func decodeInt32ForKey(key: String) -> Int32?
-    func decodeInt64ForKey(key: String) -> Int64?
-    
-    func decodeUInt8ForKey(key: String) -> UInt8?
-    func decodeUInt16ForKey(key: String) -> UInt16?
-    func decodeUInt32ForKey(key: String) -> UInt32?
-    func decodeUInt64ForKey(key: String) -> UInt64?
-    
-    func decodeFloatForKey(key: String) -> Float?
-    func decodeDoubleForKey(key: String) -> Double?
-
-
-    func decodeStringForKey(key: String) -> String?
-    */
-    
 }
 
 public enum FC2Type : UInt8 {
-    case FCTypeNil = 0
+    case Nil = 0
     case FCTypeObjectAlias8
     case FCTypeObjectAlias16
     case FCTypeObjectAlias32
     case FCTypeStringAlias8
     case FCTypeStringAlias16
     case FCTypeStringAlias32
-    case FCTypeString
+    case String
     case FCTypeDictionary
     case FCTypeArray
     case FCTypeSet
     case True
     case False
+    case Int
     case Int8
     case Int16
     case Int32
     case Int64
     case Float32
     case Float64
+    case UInt
     case UInt8
     case UInt16
     case UInt32
     case UInt64
-    case CodingObject
+    case Coding
     case FCTypeData
     case FCTypeDate
     case FCTypeMutableData
@@ -216,51 +205,102 @@ public class FastCoder2 { //<T : FCoding>
     }
     */
     
-    // write data
-    public static func encodeRootElement<T: Encode>(element : T) -> NSData? {
+    // --- Encode ----
+    
+    public static func encodeRootElement<T: Encode>(element : T, keepIntType : Bool = true) -> NSData? {
         
         let output = NSMutableData()
         
         let coder = FC2Encoder(output)
+        coder.keeptIntType = keepIntType
         
-        //coder.encode(element)
-        element.encode(coder)
+        
+        element.encode(coder) // solution to
+        //coder.encode(element) // this did not work,
 
         return output
     }
+    
+    // --- Decode ----
     
     public static func decodeRootElement<T>(data : NSData) -> T? {
         
         let coder = FC2Decoder(data)
         
-        return coder.read()
+        return coder.decode()
     }
-
-
     
+    public static func decodeRootElement(data : NSData) -> Any? {
+        
+        let coder = FC2Decoder(data)
+        
+        return coder.decode()
+    }
+    
+    public static func decodeInt(data : NSData) -> Int? {
+        let coder = FC2Decoder(data)
+        
+        return coder.decodeInt()
+    }
 }
+
+/**
+
+// does not work because self has not the type of the extened class, it has the typo encode
+extension Encode {
+public func encode(coder : FC2Encoder) {
+coder.encode(self)
+}
+}
+*/
 
 public protocol Encode {
-     func encode(coder : FC2Encoder)
+    func encode(coder: FC2Encoder)
 }
 
-extension Encode {
-    public func encode(coder : FC2Encoder) {
+
+extension Bool : Encode {
+    public func encode(coder: FC2Encoder) {
         coder.encode(self)
     }
 }
 
-extension Bool : Encode{}
+extension Int : Encode {
+    public func encode(coder: FC2Encoder) {
+        coder.encode(self)
+    }
+}
 
-extension Int : Encode {}
+extension UInt : Encode {
+    public func encode(coder: FC2Encoder) {
+        coder.encode(self)
+    }
+}
 
-extension UInt : Encode {}
+extension UInt8 : Encode {
+    public func encode(coder: FC2Encoder) {
+        coder.encode(self)
+    }
+}
 
-extension UInt8 : Encode {}
+extension Float : Encode {
+    public func encode(coder: FC2Encoder) {
+        coder.encode(self)
+    }
+}
 
-extension Float : Encode {}
+extension Double : Encode {
+    public func encode(coder: FC2Encoder) {
+        coder.encode(self)
+    }
+}
 
-extension Double : Encode {}
+extension Coding {
+    public func encode(coder: FC2Encoder) {
+        coder.encode(self)
+    }
+}
+
 
 /**
 
@@ -275,6 +315,8 @@ extension IntegerType {
 
 
 public class FC2Encoder : FC2Coder {
+    
+    public var keeptIntType = false
     
     let UInt32max = UInt(UInt32.max)
     let UInt16max = UInt(UInt16.max)
@@ -298,17 +340,26 @@ public class FC2Encoder : FC2Coder {
     
     // MARK: encode methodes
     
-
     
+    func encode<T>(element : T) {
+        
+
+    }
+
+    /**
+
     func encode(element: Coding) {
-        writeType(.CodingObject)
+        writeType(.Coding)
+        writeString(className / sturctName)
         element.encodeWithCoder(self)
         writeType(.End)
     }
+
     
     func encode(obj: NSCoding) {
         
     }
+    */
     
     func encode(boolv : Bool) {
         if boolv {
@@ -380,40 +431,50 @@ public class FC2Encoder : FC2Coder {
     
     func encode(intv : UInt) {
         //direct encodeing -> no cache
-        switch intv {
-        case UInt16max...UInt32max:
-            encode(UInt32(intv))
-        case UInt8max...UInt16max:
-            encode(UInt16(intv))
-        case 0:
-            writeType(.Zero)
-        case 1:
-            writeType(.One)
-        case 1...UInt8max:
-            encode(UInt8(intv))
-        default:
-            encode(UInt64(intv))
+        if keeptIntType {
+            writeType(.UInt)
+            writeValue(intv)
+        } else {
+            switch intv {
+            case UInt16max...UInt32max:
+                encode(UInt32(intv))
+            case UInt8max...UInt16max:
+                encode(UInt16(intv))
+            case 0:
+                writeType(.Zero)
+            case 1:
+                writeType(.One)
+            case 1...UInt8max:
+                encode(UInt8(intv))
+            default:
+                encode(UInt64(intv))
+            }
         }
     }
     
     func encode(intv : Int) {
         //direct encodeing -> no cache
-        if intv < 0 {
-            switch intv {
-            case -1:
-                writeType(.MinusOne)
-            case Int8min...0:
-                encode(Int8(intv))
-            case Int16min...Int8min:
-                encode(Int16(intv))
-            case Int32min...Int16min:
-                encode(Int32(intv))
-            default:
-                encode(Int64(intv))
-            }
+        if keeptIntType {
+            writeType(.Int)
+            writeValue(intv)
         } else {
-            // possitive numbers are more efficient encoded in UInt 
-            encode(UInt(intv))
+            if intv < 0 {
+                switch intv {
+                case -1:
+                    writeType(.MinusOne)
+                case Int8min...0:
+                    encode(Int8(intv))
+                case Int16min...Int8min:
+                    encode(Int16(intv))
+                case Int32min...Int16min:
+                    encode(Int32(intv))
+                default:
+                    encode(Int64(intv))
+                }
+            } else {
+                // possitive numbers are more efficient encoded in UInt
+                encode(UInt(intv))
+            }
         }
     }
     
@@ -438,77 +499,33 @@ public class FC2Encoder : FC2Coder {
         encodeOutput.appendBytes(&data, length:sizeof(T))
     }
     
+    func writeString(string : String) {
+        //if FastCoder.FCWriteStringAlias(self, coder: aCoder) { return }
+        //aCoder.FCCacheWrittenString(self)
+        writeType(.String)
+        encodeOutput.appendEncodedString(string)
+    }
+    
     func writeType(type : FC2Type) {
         writeValue(type.rawValue)
     }
     
-    /**
-    
-    func writeUInt(value: UInt8) {
-        
-        var data = value
-        encodeOutput.appendBytes(&data, length:sizeof(UInt8))
-    }
-    
-    func writeUInt(value: UInt16) {
-        
-        var data = value
-        encodeOutput.appendBytes(&data, length:sizeof(UInt16))
-    }
-    
-    func writeUInt(value: UInt32) {
-        
-        var data = value
-        encodeOutput.appendBytes(&data, length:sizeof(UInt32))
-    }
-    
-    func writeUInt(value: UInt64) {
-        
-        var data = value
-        encodeOutput.appendBytes(&data, length:sizeof(UInt64))
-    }
-    
-    func writeInt(value: Int8) {
-        
-        var data = value
-        encodeOutput.appendBytes(&data, length:sizeof(Int8))
-    }
-    
-    func writeInt(value: Int16) {
-        
-        var data = value
-        encodeOutput.appendBytes(&data, length:sizeof(Int16))
-    }
-    
-    func writeInt(value: Int32) {
-        
-        var data = value
-        encodeOutput.appendBytes(&data, length:sizeof(Int32))
-    }
-    
-    func writeInt(value: Int64) {
-        
-        var data = value
-        encodeOutput.appendBytes(&data, length:sizeof(Int64))
-    }
-    
-    func writeFloat(value : Float32) {
-        
-        var data = value
-        encodeOutput.appendBytes(&data, length:sizeof(Int64))
-        
-    }
-    */
-    
     // MARK: Protocol
     
+    public override func encodeValue(intv: Int8?, forKey key: String) {
+        if intv != nil {
+            writeType(.Int8)
+            writeValue(intv)
+        } else {
+            writeType(.Nil)
+        }
         
-    func encodeData(data: NSData, forKey key: String) {
-        
+        writeString(key)
+
     }
 }
 
-class FC2Decoder : FC2Coder {
+public class FC2Decoder : FC2Coder {
     
     // Key is a object, values are the related index
     //var objectCache = Dictionary<NSObject,Index>()
@@ -527,7 +544,7 @@ class FC2Decoder : FC2Coder {
     
     var location = 0
     
-    init(_ data: NSData) {
+    public init(_ data: NSData) {
         self.data = data
     }
     
@@ -547,18 +564,53 @@ class FC2Decoder : FC2Coder {
     
     // MARK: READ
     
-    func read<T>() -> T? {
+    public func decode<T>() -> T? {
+        
+        let type = readType()
+    
+        return readInstance(type) as? T
+    }
+    
+    public func decode() -> Any? {
         
         let type = readType()
         
-        return readInstance(type) as? T
-        
+         return readInstance(type)
     }
+    
+    public func decodeInt() -> Int? {
+        let type = readType()
+        
+        switch type {
+        case .Int:
+            return readInt()
+        case .Int8:
+            return Int(readInt8())
+        case .Int16:
+            return Int(readInt16())
+        case .Int32:
+            return Int(readInt32())
+        case .Int64:
+            return Int(readInt64())
+        case .UInt8:
+            return Int(readUInt8())
+        case .UInt16:
+            return Int(readUInt16())
+        case .UInt32:
+            return Int(readUInt32())
+        case .UInt64:
+            return Int(readUInt64())
+        default:
+            return nil
+        }
+    }
+    
+    // MARK: READ
     
     func readInstance(type: FC2Type) -> Any? {
         
         switch type {
-        case .FCTypeNil:
+        case .Nil:
             return nil
             //  case .FCTypeObjectAlias8:
             //      return readAlias8()
@@ -572,7 +624,7 @@ class FC2Decoder : FC2Coder {
             return readStringAlias16()
         case .FCTypeStringAlias32:
             return readStringAlias32()
-        case .FCTypeString:
+        case .String:
             return readString()
             //case .FCTypeDictionary:
             //      return readDictionary()
@@ -584,6 +636,8 @@ class FC2Decoder : FC2Coder {
             return true
         case .False:
             return false
+        case .Int:
+            return readInt()
         case .Int8:
             return readInt8()
         case .Int16:
@@ -648,27 +702,34 @@ class FC2Decoder : FC2Coder {
         return .FCTypeUnknown
     }
     
-    func readUInt8() -> Int {
+    func readUInt() -> UInt {
+        var value : UInt = 0
+        readValue(&value)
+        
+        return value
+    }
+    
+    func readUInt8() -> UInt8 {
         var value : UInt8 = 0
         readValue(&value)
         
-        return Int(value)
+        return value
     }
     
-    func readUInt16() -> Int {
+    func readUInt16() -> UInt16 {
         
         var value : UInt16 = 0
         readValue(&value)
         
-        return Int(value)
+        return value
     }
     
-    func readUInt32() -> Int {
+    func readUInt32() -> UInt32 {
         
         var value : UInt32 = 0
         readValue(&value)
         
-        return Int(value)
+        return value
     }
     
     func readUInt64() -> UInt64 {
@@ -774,26 +835,33 @@ class FC2Decoder : FC2Coder {
         return object
     }
     
-    func readInt8() -> Int {
+    func readInt() -> Int {
+        var value : Int = 0
+        readValue(&value)
+        
+        return value
+    }
+    
+    func readInt8() -> Int8 {
         var value : Int8 = 0
         readValue(&value)
         
-        return Int(value)
+        return value
         
     }
     
-    func readInt16() -> Int {
+    func readInt16() -> Int16 {
         var value : Int16 = 0
         readValue(&value)
         
-        return Int(value)
+        return value
     }
     
-    func readInt32() -> Int {
+    func readInt32() -> Int32 {
         var value : Int32 = 0
         readValue(&value)
         
-        return Int(value)
+        return value
     }
     
     func readInt64() -> Int64 {
@@ -826,6 +894,7 @@ class FC2Decoder : FC2Coder {
     
     // MARK: Protocol
 
+    /**
     override func decodeObjectForKey(key: String) -> AnyObject? {
         return nil
     }
@@ -838,151 +907,73 @@ class FC2Decoder : FC2Coder {
         return false
     }
     
+    */
+    
 }
 
 
 // Abstract super class which implemet the FCoder protocol
-public class FC2Coder : FCoder {
+public class FC2Coder : Coder {
+    
+    /**
+    public func encode(intv : Bool) {}
+    
+    public func encode(intv : Int) {}
+    public func encode(intv : UInt)  {}
+    public func encode(intv : UInt8) {}
+    
+    public func encode(realv: Float)  {}
+    public func encode(realv: Double)  {}
+    
+    public func encode(element : Coding)  {}
+    */
+    
+    
     // MARK: Protocol
-    
-    
-    
-    public func encodeObject(objv: AnyObject?, forKey key: String) {
-        
-    }
-    
-    public func encodeObject(data: NSData, forKey key: String) {
-        
-    }
     
     /**
     public func encodeValue<V>(value: V?, forKey key: String) {
-        
-    }
-    */
-
-    public func encodeValue(boolv: Bool?, forKey key: String) {
-        
-    }
-
-    public func encodeValue(intv: Int8?, forKey key: String) {
-        
-    }
-
-    public func encodeValue(intv: Int16?, forKey key: String) {
-        
-    }
-
-    public func encodeValue(intv: Int32?, forKey key: String) {
-        
-    }
-
-    public func encodeValue(intv: Int64?, forKey key: String) {
-        
-    }
     
-    public func encodeValue(intv: Int?, forKey key: String) {
-        
-    }
-
-    public func encodeValue(intv: UInt8?, forKey key: String) {
-        
-    }
-
-    public func encodeValue(intv: UInt16?, forKey key: String) {
-        
-    }
-
-    public func encodeValue(intv: UInt32?, forKey key: String) {
-        
-    }
-
-    public func encodeValue(intv: UInt64?, forKey key: String) {
-        
-    }
-    
-    public func encodeValue(intv: UInt?, forKey key: String) {
-        
-    }
-    
-    public func encodeValue(realv: Float?, forKey key: String) {
-        
-    }
-
-    public func encodeValue(realv: Double?, forKey key: String) {
-        
-    }
-    
-    public func encodeValue(strv: String?, forKey key: String) {
-        
-    }
-
-    
-    
-    /**
-    func encodeObject(objv: AnyObject?, forKey key: String) {
-        
-    }
-    
-    func encodeBool(boolv: Bool, forKey key: String) {
-        
-    }
-    
-    func encodeInt8(intv: Int8?, forKey key: String) {
-        
-    }
-    
-    func encodeInt16(intv: Int16?, forKey key: String) {
-        
-    }
-    
-    func encodeInt32(intv: Int32?, forKey key: String) {
-        
-    }
-    
-    func encodeInt64(intv: Int64?, forKey key: String) {
-        
-    }
-    
-    func encodeUInt8(intv: UInt8?, forKey key: String) {
-        
-    }
-    
-    func encodeUInt16(intv: UInt16?, forKey key: String) {
-        
-    }
-    
-    func encodeUInt32(intv: UInt32?, forKey key: String) {
-        
-    }
-    
-    func encodeUInt64(intv: UInt64?, forKey key: String) {
-        
-    }
-    
-    func encodeFloat(realv: Float?, forKey key: String) {
-        
-    }
-    
-    func encodeDouble(realv: Double?, forKey key: String) {
-        
-    }
-    
-    func encodeString(strv: String?, forKey key: String) {
-        
-    }
-    
-    func encodeData(data: NSData, forKey key: String) {
-        
     }
     */
     
+    public func encodeObject(objv: AnyObject?, forKey key: String) {}
+    public func encodeObject(data: NSData, forKey key: String) {}
+    public func encodeValue(boolv: Bool?, forKey key: String) {}
+
+    public func encodeValue(intv: Int8?, forKey key: String) {}
+
+    public func encodeValue(intv: Int16?, forKey key: String) {}
+
+    public func encodeValue(intv: Int32?, forKey key: String) {}
+
+    public func encodeValue(intv: Int64?, forKey key: String) {}
+    
+    public func encodeValue(intv: Int?, forKey key: String) {}
+
+    public func encodeValue(intv: UInt8?, forKey key: String) {}
+
+    public func encodeValue(intv: UInt16?, forKey key: String) {}
+
+    public func encodeValue(intv: UInt32?, forKey key: String) {}
+
+    public func encodeValue(intv: UInt64?, forKey key: String) {}
+    
+    public func encodeValue(intv: UInt?, forKey key: String) {}
+    
+    public func encodeValue(realv: Float?, forKey key: String) {}
+
+    public func encodeValue(realv: Double?, forKey key: String) {}
+    
+    public func encodeValue(strv: String?, forKey key: String) {}
+
     // MARK: -------------
     
+    public func decodeElementForKey<T>(key : String) -> T? { return nil }
     
-    public func decodeObjectForKey(key: String) -> AnyObject? {
-        return nil
-    }
+    public func decodeElementForKey(Key : String) -> Any? { return nil }
+    
+    public func decodeObjectForKey(key: String) -> AnyObject? { return nil }
     
     public func decodeDataForKey(key: String) -> NSData {
         return NSMutableData()
@@ -996,7 +987,6 @@ public class FC2Coder : FCoder {
         return nil
     }
 
-    
     public func decodeValueForKey(key: String) -> Int16? {
         return nil
     }
@@ -1045,70 +1035,31 @@ public class FC2Coder : FCoder {
         return nil
     }
 
-    /**
-    
-    func decodeObjectForKey(key: String) -> AnyObject? {
-        return nil
-    }
-    
-    func decodeBoolForKey(key: String) -> Bool? {
-        return nil
-    }
-    
-    
-    func decodeInt8ForKey(key: String) -> Int8? {
-        return nil
-    }
-    
-    func decodeInt16ForKey(key: String) -> Int16? {
-        return nil
-    }
-    
-    func decodeInt32ForKey(key: String) -> Int32? {
-        return nil
-    }
-    
-    func decodeInt64ForKey(key: String) -> Int64? {
-        return nil
-    }
-    
-    func decodeUInt8ForKey(key: String) -> UInt8? {
-        return nil
-    }
-    
-    func decodeUInt16ForKey(key: String) -> UInt16? {
-        return nil
-    }
-    
-    func decodeUInt32ForKey(key: String) -> UInt32? {
-        return nil
-    }
-    
-    func decodeUInt64ForKey(key: String) -> UInt64? {
-        return nil
-    }
-    
-    func decodeFloatForKey(key: String) -> Float? {
-        return nil
-    }
-    
-    func decodeDoubleForKey(key: String) -> Double? {
-        return nil
-    }
-    
-    func decodeStringForKey(key: String) -> String? {
-        return nil
-    }
-    
-    func decodeDataForKey(key: String) -> NSData {
-        return NSMutableData()
-    }
-
-    */
-    
     public func containsValueForKey(key: String) -> Bool {
         return false
     }
+
 }
 
+/**
+extension NSMutableData {
+    
+    func appendEncodedString(string: NSString) {
+        // encode with "dataUsingEncoding"
+        var zero : UInt8 = 0
+        
+        //var mutableData = NSMutableData()
+        
+        let data = string.dataUsingEncoding(NSUTF8StringEncoding)
+        
+        if data != nil {
+            self.appendData(data!)
+        }
+        
+        // write zero termination
+        self.appendBytes(&zero, length: sizeof(UInt8))
+        
+    }
+}
+*/
 
