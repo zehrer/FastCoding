@@ -10,12 +10,32 @@ import Cocoa
 import FastCoding
 import XCTest
 
+
+struct TestStruct : Coding {
+    
+    var value = 42
+    
+    init() {
+        
+    }
+    
+    init(coder decoder: Coder) {
+        value = decoder.decodeElementForKey("1")!
+    }
+    
+    func encodeWithCoder(coder : Coder) {
+        coder.encodeValue(value, forKey: "1")
+    }
+}
+
 class FastCoder2Tests: XCTestCase {
     
     func runFastCoder2<T: Encode>(element: T) -> T? {
         let data = FastCoder2.encodeRootElement(element)
         
         if data != nil {
+            print("Data size . \(data!.length)")
+            
             let obj : T? = FastCoder2.decodeRootElement(data!)
             
             if obj != nil {
@@ -41,6 +61,7 @@ class FastCoder2Tests: XCTestCase {
         // But in reality this return a NSNumber of "type" bool and not of type Integer as created
     }
     
+    // encode 64 bit
     func testBasicValueInt() {
         let input = 42
         
@@ -62,5 +83,40 @@ class FastCoder2Tests: XCTestCase {
         
         // But in reality this return a NSNumber of "type" bool and not of type Integer as created
     }
+    
+    func testBasicValueUInt8_short() {
+        let input = 42
+        
+        let data = FastCoder2.encodeRootElement(input, keepIntType : false)
+        
+        if data != nil {
+            print("Data size . \(data!.length)")
+            
+            let output : Int? = FastCoder2.decodeInt(data!)
+            
+            XCTAssertTrue(input == Int(output!) , "value not equal")
+            
+        }
+    }
+    
+    /**
+    
+    func testValue() {
+        let input = TestStruct()
+        input.value = 100
+        
+        let data = FastCoder2.encodeRootElement(input)
+        
+        if data != nil {
+            print("Data size . \(data!.length)")
+            
+            let output : Int? = FastCoder2.decodeInt(data!)
+            
+            XCTAssertTrue(input == Int(output!) , "value not equal")
+            
+        }
+        
+    }
+    */
 
 }
