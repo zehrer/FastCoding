@@ -53,6 +53,51 @@ public protocol Coding {
     func encodeWithCoder(coder : Coder)
 }
 
+public protocol Encode {
+    
+    // --- encode ---
+    
+    func encode(intv : Bool)
+    func encode(intv : Bool?)
+    
+    func encode(intv : Int)
+    func encode(intv : Int8)
+    func encode(intv : Int16)
+    func encode(intv : Int32)
+    func encode(intv : Int64)
+    
+    func encode(intv : Int?)
+    func encode(intv : Int8?)
+    func encode(intv : Int16?)
+    func encode(intv : Int32?)
+    func encode(intv : Int64?)
+    
+    func encode(intv : UInt)
+    func encode(intv : UInt8)
+    func encode(intv : UInt16)
+    func encode(intv : UInt32)
+    func encode(intv : UInt64)
+    
+    func encode(intv : UInt?)
+    func encode(intv : UInt8?)
+    func encode(intv : UInt16?)
+    func encode(intv : UInt32?)
+    func encode(intv : UInt64?)
+    
+    func encode(realv: Float)
+    func encode(realv: Double)
+    
+    func encode(realv: Float?)
+    func encode(realv: Double?)
+    
+    func encode(strv: String)
+    func encode(strv: String?)
+    
+    func encode(value : Coding)
+    func encode(value : Coding?)
+    
+}
+
 public protocol Coder {
     
     /**
@@ -178,6 +223,8 @@ public enum FC2Type : UInt8 {
     //case FCType3DTransform
 }
 
+/**
+
 public class FastCoder2 { //<T : FCoding>
 
     // write data
@@ -244,6 +291,8 @@ public class FastCoder2 { //<T : FCoding>
     }
 }
 
+*/
+
 /**
 
 // does not work because self has not the type of the extened class, it has the typo encode
@@ -254,42 +303,42 @@ coder.encode(self)
 }
 */
 
-public protocol Encode {
+public protocol FastCoder2 {
     func encode(coder: FC2Encoder)
 }
 
 
-extension Bool : Encode {
+extension Bool : FastCoder2 {
     public func encode(coder: FC2Encoder) {
         coder.encode(self)
     }
 }
 
-extension Int : Encode {
+extension Int : FastCoder2 {
     public func encode(coder: FC2Encoder) {
         coder.encode(self)
     }
 }
 
-extension UInt : Encode {
+extension UInt : FastCoder2 {
     public func encode(coder: FC2Encoder) {
         coder.encode(self)
     }
 }
 
-extension UInt8 : Encode {
+extension UInt8 : FastCoder2 {
     public func encode(coder: FC2Encoder) {
         coder.encode(self)
     }
 }
 
-extension Float : Encode {
+extension Float : FastCoder2 {
     public func encode(coder: FC2Encoder) {
         coder.encode(self)
     }
 }
 
-extension Double : Encode {
+extension Double : FastCoder2 {
     public func encode(coder: FC2Encoder) {
         coder.encode(self)
     }
@@ -314,7 +363,7 @@ extension IntegerType {
 
 
 
-public class FC2Encoder : FC2Coder {
+public class FC2Encoder : Encode { //FC2Coder
     
     public var keeptIntType = false
     
@@ -340,26 +389,15 @@ public class FC2Encoder : FC2Coder {
     
     // MARK: encode methodes
     
-    
-    func encode<T>(element : T) {
-        
-
-    }
-
     /**
-
-    func encode(element: Coding) {
-        writeType(.Coding)
-        writeString(className / sturctName)
-        element.encodeWithCoder(self)
-        writeType(.End)
-    }
-
-    
-    func encode(obj: NSCoding) {
+    // move the entry point directly to the encoder and remove FastCoder2
+    func encodeRoot<T>(element : T) {
         
+
     }
     */
+
+
     
     func encode(boolv : Bool) {
         if boolv {
@@ -369,67 +407,67 @@ public class FC2Encoder : FC2Coder {
         }
     }
     
-    func encode(intv : UInt8) {
+    public func encode(intv : UInt8) {
         //direct encodeing -> no cache
         writeType(.UInt8)
         writeValue(intv)
     }
     
-    func encode(intv: UInt16) {
+    public func encode(intv: UInt16) {
         //direct encodeing -> no cache
         writeType(.UInt16)
         writeValue(intv)
     }
     
-    func encode(intv: UInt32) {
+    public func encode(intv: UInt32) {
         //direct encodeing -> no cache
         writeType(.UInt32)
         writeValue(intv)
     }
     
-    func encode(intv : UInt64) {
+    public func encode(intv : UInt64) {
         //direct encodeing -> no cache
         writeType(.UInt64)
         writeValue(intv)
     }
     
-    func encode(intv : Int8) {
+    public func encode(intv : Int8) {
         //direct encodeing -> no cache
         writeType(.Int8)
         writeValue(intv)
     }
     
-    func encode(intv: Int16) {
+    public func encode(intv: Int16) {
         //direct encodeing -> no cache
         writeType(.Int16)
         writeValue(intv)
     }
     
-    func encode(intv: Int32) {
+    public func encode(intv: Int32) {
         //direct encodeing -> no cache
         writeType(.Int32)
         writeValue(intv)
     }
     
-    func encode(intv : Int64) {
+    public func encode(intv : Int64) {
         //direct encodeing -> no cache
         writeType(.Int64)
         writeValue(intv)
     }
     
-    func encode(realv : Float) {
+    public func encode(realv : Float) {
         //direct encodeing -> no cache
         writeType(.Float32)
         writeValue(realv)
     }
     
-    func encode(realv : Double) {
+    public func encode(realv : Double) {
         //direct encodeing -> no cache
         writeType(.Float32)
         writeValue(realv)
     }
     
-    func encode(intv : UInt) {
+    public func encode(intv : UInt) {
         //direct encodeing -> no cache
         if keeptIntType {
             writeType(.UInt)
@@ -452,7 +490,7 @@ public class FC2Encoder : FC2Coder {
         }
     }
     
-    func encode(intv : Int) {
+    public func encode(intv : Int) {
         //direct encodeing -> no cache
         if keeptIntType {
             writeType(.Int)
@@ -477,6 +515,20 @@ public class FC2Encoder : FC2Coder {
             }
         }
     }
+    
+    public func encode(element: Coding) {
+        writeType(.Coding)
+        //writeString(className / sturctName)
+        element.encodeWithCoder(self)
+        writeType(.End)
+    }
+    
+    /**
+    
+    func encode(obj: NSCoding) {
+    
+    }
+    */
     
     func encode(element : Any) {
         
@@ -512,6 +564,8 @@ public class FC2Encoder : FC2Coder {
     
     // MARK: Protocol
     
+    /**
+    
     public override func encodeValue(intv: Int8?, forKey key: String) {
         if intv != nil {
             writeType(.Int8)
@@ -523,6 +577,7 @@ public class FC2Encoder : FC2Coder {
         writeString(key)
 
     }
+    */
 }
 
 public class FC2Decoder : FC2Coder {
