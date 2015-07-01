@@ -19,24 +19,29 @@ struct TestStruct : Coding {
         
     }
     
-    init(coder decoder: Coder) {
-        value = decoder.decodeElementForKey("1")!
+    init(coder decoder: Decode) {
+        value = decoder.decode()
     }
     
-    func encodeWithCoder(coder : Coder) {
-        coder.encodeValue(value, forKey: "1")
+    func encodeWithCoder(coder : Encode) {
+        coder.encode(value)
     }
+}
+
+func == (l : TestStruct, r: TestStruct) -> Bool {
+    return l.value == r.value
 }
 
 class FastCoder2Tests: XCTestCase {
     
-    func runFastCoder2<T: Encode>(element: T) -> T? {
-        let data = FastCoder2.encodeRootElement(element)
+    func runFastCoder2<T: FastCoder2>(element: T) -> T? {
+        
+        let data = FC2Encoder.encodeRoot(element)
         
         if data != nil {
             print("Data size . \(data!.length)")
             
-            let obj : T? = FastCoder2.decodeRootElement(data!)
+            let obj : T? = FC2Decoder.decodeRoot(data!)
             
             if obj != nil {
                 return obj!
@@ -85,38 +90,43 @@ class FastCoder2Tests: XCTestCase {
     }
     
     func testBasicValueUInt8_short() {
+
         let input = 42
+        let encoder = FC2Encoder()
+        encoder.keeptIntType = false
         
-        let data = FastCoder2.encodeRootElement(input, keepIntType : false)
+        let data = encoder.encodeRoot(input)
         
         if data != nil {
+            
             print("Data size . \(data!.length)")
+            let decoder = FC2Decoder(data!)
             
-            let output : Int? = FastCoder2.decodeInt(data!)
+            let output : Int = decoder.decode()
             
-            XCTAssertTrue(input == Int(output!) , "value not equal")
+            XCTAssertTrue(input == output , "value not equal")
             
         }
     }
-    
-    /**
     
     func testValue() {
-        let input = TestStruct()
+        var input = TestStruct()
         input.value = 100
         
-        let data = FastCoder2.encodeRootElement(input)
+        let data = FC2Encoder.encodeRoot(input)
         
         if data != nil {
             print("Data size . \(data!.length)")
             
-            let output : Int? = FastCoder2.decodeInt(data!)
+            let decoder = FC2Decoder(data!)
+        
+            let output : TestStruct? =  decoder.decode()
             
-            XCTAssertTrue(input == Int(output!) , "value not equal")
+            XCTAssertTrue(input == output! , "value not equal")
             
         }
         
     }
-    */
+    
 
 }
