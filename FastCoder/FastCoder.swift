@@ -480,6 +480,7 @@ static id FCReadArray(__unsafe_unretained FCNSDecoder *decoder)
             decoder.properties[key] = object
         }
         
+        // TODO: Problem is fixed in Swift 2.0
         //let objClass = NSClassFromString(className) as! NSCoding.Type
         // it seems this code lead to a segmentation fault in the compiler
         //var object : NSObject = objClass(coder: decoder) as! NSObject
