@@ -1,13 +1,13 @@
 //
 //  FastCoding.swift
 //
-//  Version 0.84
+//  Version 0.9
 //
 //  Created by Stephan Zehrer 04/21/2015
 //  Copyright (c) 2015 Stephan Zehrer
 //  Obj-C Version created by Nick Lockwood on 09/12/2013.
 //
-// This is a port of the the Obj-C libray/classes FastCoding to SWIFT 1.2
+// This is a port of the the Obj-C libray/classes FastCoding to SWIFT 2.0
 // https://github.com/nicklockwood/FastCoding
 // Baseline of this port was version 3.2.1 of FastCoding
 //
@@ -480,16 +480,17 @@ static id FCReadArray(__unsafe_unretained FCNSDecoder *decoder)
             decoder.properties[key] = object
         }
         
-        // TODO: Problem is fixed in Swift 2.0
-        //let objClass = NSClassFromString(className) as! NSCoding.Type
-        // it seems this code lead to a segmentation fault in the compiler
-        //var object : NSObject = objClass(coder: decoder) as! NSObject
+        // This problem was fixed in SWIFT 2.0
+        
+        let objClass = NSClassFromString(className) as! NSCoding.Type
+        let object : NSObject = objClass.init(coder: decoder) as! NSObject
         
         //let objClass: AnyClass! = NSClassFromString(className)
         //let codingClass = objClass as! NSCoding.Type
         //var object = codingClass.init(coder: decoder)
         
-        let object = ObjCHelper.initClass(className, withCoder: decoder)
+        // OLD CODe, uses a objc methode to call init
+        //let object = ObjCHelper.initClass(className, withCoder: decoder)
         
         decoder.objectCache.append(object)
         

@@ -17,7 +17,6 @@
 		AA25269E1AE786FE00B4767A /* FastCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25269D1AE786FE00B4767A /* FastCoder.swift */; };
 		AA75B1781B360C35008C5D32 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = AA75B1771B360C35008C5D32 /* README.md */; };
 		AAD957581AED6832002C7446 /* ObjCHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD957561AED6832002C7446 /* ObjCHelper.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		AAD957591AED6832002C7446 /* ObjCHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = AAD957571AED6832002C7446 /* ObjCHelper.m */; };
 		AAF961351AED734A002D9638 /* FastCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2526531AE780E800B4767A /* FastCoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
@@ -312,7 +311,6 @@
 			files = (
 				AA25269E1AE786FE00B4767A /* FastCoder.swift in Sources */,
 				AA06208A1B3AA6B2000DB7F7 /* FastCoder2.swift in Sources */,
-				AAD957591AED6832002C7446 /* ObjCHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
